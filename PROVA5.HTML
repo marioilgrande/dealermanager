@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEALER MANAGER</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            margin: 0 5px;
+            cursor: pointer;
+            font-weight: bold;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+        .tab.active {
+            background-color: #33A1E3;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #33A1E3;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2B91C1;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .alert {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>DEALER MANAGER</h1>
+    <p style="text-align: center; color: #555;">Gestisci i tuoi obiettivi con precisione e raggiungi il successo.</p>
+
+    <!-- Navigazione a schede -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('gestioneCosti')">Gestione Costi</div>
+        <div class="tab" onclick="showTab('totaleGuadagni')">Totale Guadagni</div>
+        <div class="tab" onclick="showTab('produzioneGiornaliera')">Produzione Giornaliera</div>
+        <div class="tab" onclick="showTab('targetMese')">Target Mese</div>
+    </div>
+
+    <!-- Gestione Costi -->
+    <div id="gestioneCosti" class="tab-content active">
+        <h2>Gestione Costi</h2>
+        <form>
+            <div class="form-group">
+                <label for="ragioneSociale">Ragione Sociale:</label>
+                <input type="text" id="ragioneSociale" placeholder="Inserisci la ragione sociale">
+            </div>
+            <div class="form-group">
+                <label for="affitto">Affitto (€):</label>
+                <input type="number" id="affitto" placeholder="Inserisci il costo dell'affitto">
+            </div>
+            <div class="form-group">
+                <label for="costoPersonale">Costo Personale (€):</label>
+                <input type="number" id="costoPersonale" placeholder="Inserisci il costo del personale">
+            </div>
+            <div class="form-group">
+                <label for="utenze">Utenze (€):</label>
+                <input type="number" id="utenze" placeholder="Inserisci il costo delle utenze">
+            </div>
+            <div class="form-group">
+                <input type="checkbox" id="guadagni" />
+                <label for="guadagni">Aumenta i guadagni con il 20% di contratti business</label>
+            </div>
+            <button type="button" onclick="calcolaContratti()">Calcola</button>
+        </form>
+        <div id="contrattiResult" class="result"></div>
+    </div>
+
+    <!-- Totale Guadagni -->
+    <div id="totaleGuadagni" class="tab-content">
+        <h2>Totale Guadagni</h2>
+        <form>
+            <div class="form-group">
+                <label for="manualRagioneSociale">Ragione Sociale:</label>
+                <input type="text" id="manualRagioneSociale" placeholder="Inserisci la ragione sociale">
+            </div>
+            <div class="form-group">
+                <label for="contrattiDomestici">Contratti Domestici:</label>
+                <input type="number" id="contrattiDomestici" placeholder="Inserisci il numero di contratti domestici">
+            </div>
+            <div class="form-group">
+                <label for="contrattiBusiness">Contratti Business:</label>
+                <input type="number" id="contrattiBusiness" placeholder="Inserisci il numero di contratti business">
+            </div>
+            <button type="button" onclick="calcolaManuale()">Calcola</button>
+        </form>
+        <div id="manualeResult" class="result"></div>
+    </div>
+
+    <!-- Produzione Giornaliera -->
+    <div id="produzioneGiornaliera" class="tab-content">
+    <h2>Produzione Giornaliera</h2>
+    <form>
+        <div class="form-group">
+            <label for="produzioneRagioneSociale">Ragione Sociale:</label>
+            <input type="text" id="produzioneRagioneSociale" placeholder="Inserisci la ragione sociale">
+        </div>
+        <div class="form-group">
+            <label for="gara">Tipo di Gara:</label>
+            <select id="gara">
+                <option value="standard">Gara Standard</option>
+                <option value="sprint">Gara Sprint 20</option>
+                <option value="on_top">Gara On Top 35</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="contrattiReal">Contratti Attualmente Inseriti:</label>
+            <input type="number" id="contrattiReal" placeholder="Inserisci il numero di contratti attuali">
+        </div>
+        <button type="button" onclick="calcolaProduzione()">Calcola</button>
+    </form>
+    <div id="produzioneResult" class="result"></div>
+</div>
+
+
+    <div id="targetMese" class="tab-content">
+    <h2 style="text-align: left;">Target Mese</h2>
+    <form style="width: 100%;">
+        <div style="display: flex; justify-content: start; gap: 50px; text-align: left;">
+            <!-- Colonna Sinistra: Target -->
+            <div style="flex: 1; max-width: 45%;">
+                <h3 style="text-align: left;">Target da Raggiungere</h3>
+                <div class="form-group">
+                    <label for="targetProduzione">Produzione/Contratti:</label>
+                    <input type="number" id="targetProduzione" placeholder="Inserisci il target per Produzione/Contratti">
+                </div>
+                <div class="form-group">
+                    <label for="targetProduttivi">Produttivi:</label>
+                    <input type="number" id="targetProduttivi" placeholder="Inserisci il target per Produttivi">
+                </div>
+                <div class="form-group">
+                    <label for="targetAffiliazioni">Affiliazioni:</label>
+                    <input type="number" id="targetAffiliazioni" placeholder="Inserisci il target per Affiliazioni">
+                </div>
+            </div>
+
+            <!-- Colonna Destra: Produzione Attuale -->
+            <div style="flex: 1; max-width: 45%;">
+                <h3 style="text-align: left;">Produzione Attuale (REAL)</h3>
+                <div class="form-group">
+                    <label for="realProduzione">Produzione/Contratti:</label>
+                    <input type="number" id="realProduzione" placeholder="Inserisci la produzione attuale per Produzione/Contratti">
+                </div>
+                <div class="form-group">
+                    <label for="realProduttivi">Produttivi:</label>
+                    <input type="number" id="realProduttivi" placeholder="Inserisci la produzione attuale per Produttivi">
+                </div>
+                <div class="form-group">
+                    <label for="realAffiliazioni">Affiliazioni:</label>
+                    <input type="number" id="realAffiliazioni" placeholder="Inserisci la produzione attuale per Affiliazioni">
+                </div>
+            </div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button type="button" onclick="calcolaTargetMese()" style="width: 200px; padding: 10px; background-color: #33A1E3; color: white; border: none; border-radius: 5px; cursor: pointer;">Calcola</button>
+        </div>
+    </form>
+    <div id="targetMeseResult" class="result" style="margin-top: 20px;"></div>
+</div>
+
+
+    <script>
+        // Funzione per navigare tra le schede
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Gestione Costi
+        function calcolaContratti() {
+            const ragioneSociale = document.getElementById('ragioneSociale').value || "N/A";
+            const affitto = parseFloat(document.getElementById('affitto').value) || 0;
+            const costoPersonale = parseFloat(document.getElementById('costoPersonale').value) || 0;
+            const utenze = parseFloat(document.getElementById('utenze').value) || 0;
+            const guadagni = document.getElementById('guadagni').checked;
+
+            const totaleSpese = affitto + costoPersonale + utenze;
+            const provvigioneDomestico = 61.5;
+            const provvigioneBusiness = 91.5;
+
+            let contrattiDomestici = Math.ceil(totaleSpese / provvigioneDomestico);
+            let contrattiBusiness = 0;
+
+            if (guadagni) {
+                contrattiBusiness = Math.ceil(contrattiDomestici * 0.2);
+                contrattiDomestici -= contrattiBusiness;
+            }
+
+            const totaleFatturato =
+                contrattiDomestici * provvigioneDomestico +
+                contrattiBusiness * provvigioneBusiness;
+
+            document.getElementById('contrattiResult').innerHTML = `
+                <p><strong>Ragione Sociale:</strong> ${ragioneSociale}</p>
+                <p><strong>Totale Spese:</strong> €${totaleSpese.toFixed(2)}</p>
+                <p><strong>Contratti Necessari:</strong> ${contrattiDomestici + contrattiBusiness} 
+                (Domestici: ${contrattiDomestici}, Business: ${contrattiBusiness})</p>
+                <p><strong>Fatturato Generato:</strong> €${totaleFatturato.toFixed(2)}</p>
+                <p class="success">Con il tuo impegno puoi coprire tutte le spese e ottenere guadagni aggiuntivi. Continua così!</p>`;
+        }
+
+        // Totale Guadagni
+        function calcolaManuale() {
+            const ragioneSociale = document.getElementById('manualRagioneSociale').value || "N/A";
+            const contrattiDomestici = parseInt(document.getElementById('contrattiDomestici').value) || 0;
+            const contrattiBusiness = parseInt(document.getElementById('contrattiBusiness').value) || 0;
+
+            const totaleContratti = contrattiDomestici + contrattiBusiness;
+            const provvigioneDomestico = 61.5;
+            const provvigioneBusiness = 91.5;
+
+            const totaleStandard =
+                contrattiDomestici * provvigioneDomestico +
+                contrattiBusiness * provvigioneBusiness;
+
+            const totaleSprint = totaleContratti >= 20
+                ? totaleStandard + totaleContratti * 5
+                : totaleStandard;
+
+            const totaleOnTop =
+                totaleContratti >= 35 ? totaleContratti * 95 : 0;
+
+            let garaConsigliata = "Gara Standard";
+            let fatturatoGara = totaleStandard;
+
+            if (totaleContratti >= 35) {
+                garaConsigliata = "Gara On Top 35";
+                fatturatoGara = totaleOnTop;
+            } else if (totaleContratti >= 20) {
+                garaConsigliata = "Gara Sprint 20";
+                fatturatoGara = totaleSprint;
+            }
+
+            document.getElementById('manualeResult').innerHTML = `
+                <p><strong>Ragione Sociale:</strong> ${ragioneSociale}</p>
+                <p><strong>Totale Contratti:</strong> ${totaleContratti} (Domestici: ${contrattiDomestici}, Business: ${contrattiBusiness})</p>
+                <p><strong>Fatturato Gara Standard:</strong> €${totaleStandard.toFixed(2)}</p>
+                ${totaleContratti >= 20 ? `<p><strong>Fatturato Gara Sprint 20:</strong> €${totaleSprint.toFixed(2)}</p>` : ""}
+                ${totaleContratti >= 35 ? `<p><strong>Fatturato Gara On Top 35:</strong> €${totaleOnTop.toFixed(2)}</p>` : ""}
+                <p class="success"><strong>Gara Consigliata:</strong> ${garaConsigliata}</p>
+                <p class="success">Continua così! Con questi contratti, puoi raggiungere i tuoi obiettivi e massimizzare i guadagni.</p>`;
+        }
+
+        // Produzione Giornaliera
+        function calcolaProduzione() {
+    const ragioneSociale = document.getElementById('produzioneRagioneSociale').value || "N/A";
+    const tipoGara = document.getElementById('gara').value;
+    const contrattiReal = parseInt(document.getElementById('contrattiReal').value) || 0;
+
+    const obiettivo = tipoGara === 'on_top' ? 35 : tipoGara === 'sprint' ? 20 : 6;
+
+    // Calcolo giorni lavorativi rimanenti (lun-sab)
+    const oggi = new Date();
+    const ultimoGiorno = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0);
+    let giorniLavorativi = 0;
+
+    for (let d = oggi; d <= ultimoGiorno; d.setDate(d.getDate() + 1)) {
+        const giorno = d.getDay();
+        if (giorno >= 1 && giorno <= 6) giorniLavorativi++; // Lun-Sab
+    }
+
+    const contrattiMancanti = Math.max(0, obiettivo - contrattiReal);
+    const produzioneGiornaliera = giorniLavorativi > 0
+        ? Math.ceil(contrattiMancanti / giorniLavorativi)
+        : contrattiMancanti;
+
+    const messaggio = `
+        <p><strong>Ragione Sociale:</strong> ${ragioneSociale}</p>
+        <p><strong>Tipo di Gara:</strong> ${tipoGara.toUpperCase()}</p>
+        <p><strong>Contratti Attuali:</strong> ${contrattiReal}</p>
+        <p><strong>Contratti Mancanti:</strong> ${contrattiMancanti}</p>
+        <p><strong>Produzione Giornaliera Necessaria:</strong> ${produzioneGiornaliera} contratti/giorno</p>
+        <p class="success">Raggiungi il tuo obiettivo con costanza e determinazione. Hai ${giorniLavorativi} giorni lavorativi per completare la tua sfida. Puoi farcela!</p>
+        <button onclick="inviaReportWhatsApp('${ragioneSociale}', '${tipoGara}', ${contrattiReal}, ${contrattiMancanti}, ${produzioneGiornaliera})">
+            Invia Report via WhatsApp
+        </button>
+    `;
+
+    document.getElementById('produzioneResult').innerHTML = messaggio;
+}
+
+// Funzione per inviare il report via WhatsApp
+function inviaReportWhatsApp(ragioneSociale, tipoGara, contrattiReal, contrattiMancanti, produzioneGiornaliera) {
+    const messaggio = `
+        *TARGET MESE CORRENTE*
+        Ragione Sociale: *${ragioneSociale}*
+        Gara Selezionata: *${tipoGara.toUpperCase()}*
+        Contratti Inseriti: *${contrattiReal}*
+        Contratti Mancanti: *${contrattiMancanti}*
+        Produzione Giornaliera: *${produzioneGiornaliera} contratti/giorno*
+
+        Continua a lavorare con costanza e determinazione per raggiungere il tuo obiettivo. Il successo è a portata di mano!
+
+        *MARIO ISERNIA*
+    `.trim();
+
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(messaggio)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+
+        // Target Mese
+        function calcolaTargetMese() {
+    // Dati Target
+    const targetProduzione = parseInt(document.getElementById('targetProduzione').value) || 0;
+    const targetProduttivi = parseInt(document.getElementById('targetProduttivi').value) || 0;
+    const targetAffiliazioni = parseInt(document.getElementById('targetAffiliazioni').value) || 0;
+
+    // Dati Real
+    const realProduzione = parseInt(document.getElementById('realProduzione').value) || 0;
+    const realProduttivi = parseInt(document.getElementById('realProduttivi').value) || 0;
+    const realAffiliazioni = parseInt(document.getElementById('realAffiliazioni').value) || 0;
+
+    // Giorni lavorativi rimanenti (lun-sab)
+    const oggi = new Date();
+    const ultimoGiorno = new Date(oggi.getFullYear(), oggi.getMonth() + 1, 0);
+    let giorniLavorativi = 0;
+
+    for (let d = oggi; d <= ultimoGiorno; d.setDate(d.getDate() + 1)) {
+        const giorno = d.getDay();
+        if (giorno >= 1 && giorno <= 6) giorniLavorativi++; // Lun-Sab
+    }
+
+    // Calcolo produzione giornaliera per ogni pista
+    const produzioneMancanteProduzione = Math.max(0, targetProduzione - realProduzione);
+    const produzioneMancanteProduttivi = Math.max(0, targetProduttivi - realProduttivi);
+    const produzioneMancanteAffiliazioni = Math.max(0, targetAffiliazioni - realAffiliazioni);
+
+    const giornalieraProduzione = giorniLavorativi > 0
+        ? Math.ceil(produzioneMancanteProduzione / giorniLavorativi)
+        : produzioneMancanteProduzione;
+
+    const giornalieraProduttivi = giorniLavorativi > 0
+        ? Math.ceil(produzioneMancanteProduttivi / giorniLavorativi)
+        : produzioneMancanteProduttivi;
+
+    const giornalieraAffiliazioni = giorniLavorativi > 0
+        ? Math.ceil(produzioneMancanteAffiliazioni / giorniLavorativi)
+        : produzioneMancanteAffiliazioni;
+
+    const messaggio = `
+        <p><strong>Giorni Lavorativi Rimanenti:</strong> ${giorniLavorativi}</p>
+        <p><strong>Produzione/Contratti</strong>: Mancano ${produzioneMancanteProduzione}, devi mantenere ${giornalieraProduzione} contratti/giorno</p>
+        <p><strong>Produttivi</strong>: Mancano ${produzioneMancanteProduttivi}, devi mantenere ${giornalieraProduttivi} contratti/giorno</p>
+        <p><strong>Affiliazioni</strong>: Mancano ${produzioneMancanteAffiliazioni}, devi mantenere ${giornalieraAffiliazioni} contratti/giorno</p>
+        <p class="success">Continua a lavorare con costanza e determinazione. Sei sulla strada giusta per raggiungere i tuoi obiettivi!</p>
+    `;
+
+    document.getElementById('targetMeseResult').innerHTML = messaggio;
+}
+    </script>
+</body>
+</html>
+
