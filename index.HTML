@@ -6,215 +6,275 @@
     <title>DEALER MANAGER</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            text-align: center;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
             color: #333;
         }
+
+        h1 {
+            text-align: center;
+            color: #007BFF;
+            margin-top: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
         .tabs {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
         }
+
         .tab {
             padding: 10px 20px;
-            margin: 0 5px;
             cursor: pointer;
             font-weight: bold;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            background-color: #f9f9f9;
+            border-radius: 5px 5px 0 0;
+            transition: background-color 0.3s ease;
+            color: #333;
         }
+
         .tab.active {
-            background-color: #33A1E3;
+            background-color: #007BFF;
             color: white;
+            border-bottom: 2px solid #007BFF;
         }
+
         .tab-content {
             display: none;
-            background-color: white;
             padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 0 0 10px 10px;
         }
+
         .tab-content.active {
             display: block;
         }
+
         .form-group {
             margin-bottom: 15px;
         }
+
         label {
             display: block;
-            margin-bottom: 5px;
             font-weight: bold;
+            margin-bottom: 5px;
         }
+
         input, select, button {
             width: 100%;
             padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
             font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
+
         button {
-            background-color: #33A1E3;
+            background-color: #007BFF;
             color: white;
+            font-size: 18px;
+            border: none;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #2B91C1;
+            background-color: #0056b3;
         }
+
         .result {
             margin-top: 20px;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #f1f1f1;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #e9ffe9;
+            border: 1px solid #c1e1c1;
             font-weight: bold;
         }
+
         .success {
             color: green;
         }
+
         .alert {
             color: red;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                flex: 1 1 45%;
+                text-align: center;
+            }
+
+            button {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 14px;
+            }
+
+            .tab {
+                flex: 1 1 100%;
+                margin-bottom: 5px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            input, select, button {
+                font-size: 14px;
+                padding: 8px;
+            }
         }
     </style>
 </head>
 <body>
 
     <h1>DEALER MANAGER</h1>
-    <p style="text-align: center; color: #555;">Gestisci i tuoi obiettivi con precisione e raggiungi il successo.</p>
+    <div class="container">
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('gestioneCosti')">Gestione Costi</div>
+            <div class="tab" onclick="showTab('totaleGuadagni')">Totale Guadagni</div>
+            <div class="tab" onclick="showTab('produzioneGiornaliera')">Produzione Giornaliera</div>
+            <div class="tab" onclick="showTab('targetMese')">Target Mese</div>
+        </div>
 
-    <!-- Navigazione a schede -->
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('gestioneCosti')">Gestione Costi</div>
-        <div class="tab" onclick="showTab('totaleGuadagni')">Totale Guadagni</div>
-        <div class="tab" onclick="showTab('produzioneGiornaliera')">Produzione Giornaliera</div>
-        <div class="tab" onclick="showTab('targetMese')">Target Mese</div>
+        <!-- Gestione Costi -->
+        <div id="gestioneCosti" class="tab-content active">
+            <h2>Gestione Costi</h2>
+            <form>
+                <div class="form-group">
+                    <label for="ragioneSociale">Ragione Sociale:</label>
+                    <input type="text" id="ragioneSociale" placeholder="Inserisci la ragione sociale">
+                </div>
+                <div class="form-group">
+                    <label for="affitto">Affitto (€):</label>
+                    <input type="number" id="affitto" placeholder="Inserisci il costo dell'affitto">
+                </div>
+                <div class="form-group">
+                    <label for="costoPersonale">Costo Personale (€):</label>
+                    <input type="number" id="costoPersonale" placeholder="Inserisci il costo del personale">
+                </div>
+                <div class="form-group">
+                    <label for="utenze">Utenze (€):</label>
+                    <input type="number" id="utenze" placeholder="Inserisci il costo delle utenze">
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="guadagni">
+                    <label for="guadagni">Aumenta i guadagni con il 20% di contratti business</label>
+                </div>
+                <button type="button" onclick="calcolaContratti()">Calcola</button>
+            </form>
+            <div id="contrattiResult" class="result"></div>
+        </div>
+
+        <!-- Totale Guadagni -->
+        <div id="totaleGuadagni" class="tab-content">
+            <h2>Totale Guadagni</h2>
+            <form>
+                <div class="form-group">
+                    <label for="manualRagioneSociale">Ragione Sociale:</label>
+                    <input type="text" id="manualRagioneSociale" placeholder="Inserisci la ragione sociale">
+                </div>
+                <div class="form-group">
+                    <label for="contrattiDomestici">Contratti Domestici:</label>
+                    <input type="number" id="contrattiDomestici" placeholder="Inserisci il numero di contratti domestici">
+                </div>
+                <div class="form-group">
+                    <label for="contrattiBusiness">Contratti Business:</label>
+                    <input type="number" id="contrattiBusiness" placeholder="Inserisci il numero di contratti business">
+                </div>
+                <button type="button" onclick="calcolaManuale()">Calcola</button>
+            </form>
+            <div id="manualeResult" class="result"></div>
+        </div>
+
+        <!-- Produzione Giornaliera -->
+        <div id="produzioneGiornaliera" class="tab-content">
+            <h2>Produzione Giornaliera</h2>
+            <form>
+                <div class="form-group">
+                    <label for="produzioneRagioneSociale">Ragione Sociale:</label>
+                    <input type="text" id="produzioneRagioneSociale" placeholder="Inserisci la ragione sociale">
+                </div>
+                <div class="form-group">
+                    <label for="gara">Tipo di Gara:</label>
+                    <select id="gara">
+                        <option value="standard">Gara Standard</option>
+                        <option value="sprint">Gara Sprint 20</option>
+                        <option value="on_top">Gara On Top 35</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="contrattiReal">Contratti Attualmente Inseriti:</label>
+                    <input type="number" id="contrattiReal" placeholder="Inserisci il numero di contratti attuali">
+                </div>
+                <button type="button" onclick="calcolaProduzione()">Calcola</button>
+            </form>
+            <div id="produzioneResult" class="result"></div>
+        </div>
+
+        <!-- Target Mese -->
+        <div id="targetMese" class="tab-content">
+            <h2>Target Mese</h2>
+            <form>
+                <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <h3>Target da Raggiungere</h3>
+                        <div class="form-group">
+                            <label for="targetProduzione">Produzione/Contratti:</label>
+                            <input type="number" id="targetProduzione" placeholder="Inserisci il target">
+                        </div>
+                        <div class="form-group">
+                            <label for="targetProduttivi">Produttivi:</label>
+                            <input type="number" id="targetProduttivi" placeholder="Inserisci il target">
+                        </div>
+                        <div class="form-group">
+                            <label for="targetAffiliazioni">Affiliazioni:</label>
+                            <input type="number" id="targetAffiliazioni" placeholder="Inserisci il target">
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 250px;">
+                        <h3>Produzione Attuale (REAL)</h3>
+                        <div class="form-group">
+                            <label for="realProduzione">Produzione/Contratti:</label>
+                            <input type="number" id="realProduzione" placeholder="Inserisci il valore attuale">
+                        </div>
+                        <div class="form-group">
+                            <label for="realProduttivi">Produttivi:</label>
+                            <input type="number" id="realProduttivi" placeholder="Inserisci il valore attuale">
+                        </div>
+                        <div class="form-group">
+                            <label for="realAffiliazioni">Affiliazioni:</label>
+                            <input type="number" id="realAffiliazioni" placeholder="Inserisci il valore attuale">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="calcolaTargetMese()">Calcola</button>
+            </form>
+            <div id="targetMeseResult" class="result"></div>
+        </div>
     </div>
-
-    <!-- Gestione Costi -->
-    <div id="gestioneCosti" class="tab-content active">
-        <h2>Gestione Costi</h2>
-        <form>
-            <div class="form-group">
-                <label for="ragioneSociale">Ragione Sociale:</label>
-                <input type="text" id="ragioneSociale" placeholder="Inserisci la ragione sociale">
-            </div>
-            <div class="form-group">
-                <label for="affitto">Affitto (€):</label>
-                <input type="number" id="affitto" placeholder="Inserisci il costo dell'affitto">
-            </div>
-            <div class="form-group">
-                <label for="costoPersonale">Costo Personale (€):</label>
-                <input type="number" id="costoPersonale" placeholder="Inserisci il costo del personale">
-            </div>
-            <div class="form-group">
-                <label for="utenze">Utenze (€):</label>
-                <input type="number" id="utenze" placeholder="Inserisci il costo delle utenze">
-            </div>
-            <div class="form-group">
-                <input type="checkbox" id="guadagni" />
-                <label for="guadagni">Aumenta i guadagni con il 20% di contratti business</label>
-            </div>
-            <button type="button" onclick="calcolaContratti()">Calcola</button>
-        </form>
-        <div id="contrattiResult" class="result"></div>
-    </div>
-
-    <!-- Totale Guadagni -->
-    <div id="totaleGuadagni" class="tab-content">
-        <h2>Totale Guadagni</h2>
-        <form>
-            <div class="form-group">
-                <label for="manualRagioneSociale">Ragione Sociale:</label>
-                <input type="text" id="manualRagioneSociale" placeholder="Inserisci la ragione sociale">
-            </div>
-            <div class="form-group">
-                <label for="contrattiDomestici">Contratti Domestici:</label>
-                <input type="number" id="contrattiDomestici" placeholder="Inserisci il numero di contratti domestici">
-            </div>
-            <div class="form-group">
-                <label for="contrattiBusiness">Contratti Business:</label>
-                <input type="number" id="contrattiBusiness" placeholder="Inserisci il numero di contratti business">
-            </div>
-            <button type="button" onclick="calcolaManuale()">Calcola</button>
-        </form>
-        <div id="manualeResult" class="result"></div>
-    </div>
-
-    <!-- Produzione Giornaliera -->
-    <div id="produzioneGiornaliera" class="tab-content">
-    <h2>Produzione Giornaliera</h2>
-    <form>
-        <div class="form-group">
-            <label for="produzioneRagioneSociale">Ragione Sociale:</label>
-            <input type="text" id="produzioneRagioneSociale" placeholder="Inserisci la ragione sociale">
-        </div>
-        <div class="form-group">
-            <label for="gara">Tipo di Gara:</label>
-            <select id="gara">
-                <option value="standard">Gara Standard</option>
-                <option value="sprint">Gara Sprint 20</option>
-                <option value="on_top">Gara On Top 35</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="contrattiReal">Contratti Attualmente Inseriti:</label>
-            <input type="number" id="contrattiReal" placeholder="Inserisci il numero di contratti attuali">
-        </div>
-        <button type="button" onclick="calcolaProduzione()">Calcola</button>
-    </form>
-    <div id="produzioneResult" class="result"></div>
-</div>
-
-
-    <div id="targetMese" class="tab-content">
-    <h2 style="text-align: left;">Target Mese</h2>
-    <form style="width: 100%;">
-        <div style="display: flex; justify-content: start; gap: 50px; text-align: left;">
-            <!-- Colonna Sinistra: Target -->
-            <div style="flex: 1; max-width: 45%;">
-                <h3 style="text-align: left;">Target da Raggiungere</h3>
-                <div class="form-group">
-                    <label for="targetProduzione">Produzione/Contratti:</label>
-                    <input type="number" id="targetProduzione" placeholder="Inserisci il target per Produzione/Contratti">
-                </div>
-                <div class="form-group">
-                    <label for="targetProduttivi">Produttivi:</label>
-                    <input type="number" id="targetProduttivi" placeholder="Inserisci il target per Produttivi">
-                </div>
-                <div class="form-group">
-                    <label for="targetAffiliazioni">Affiliazioni:</label>
-                    <input type="number" id="targetAffiliazioni" placeholder="Inserisci il target per Affiliazioni">
-                </div>
-            </div>
-
-            <!-- Colonna Destra: Produzione Attuale -->
-            <div style="flex: 1; max-width: 45%;">
-                <h3 style="text-align: left;">Produzione Attuale (REAL)</h3>
-                <div class="form-group">
-                    <label for="realProduzione">Produzione/Contratti:</label>
-                    <input type="number" id="realProduzione" placeholder="Inserisci la produzione attuale per Produzione/Contratti">
-                </div>
-                <div class="form-group">
-                    <label for="realProduttivi">Produttivi:</label>
-                    <input type="number" id="realProduttivi" placeholder="Inserisci la produzione attuale per Produttivi">
-                </div>
-                <div class="form-group">
-                    <label for="realAffiliazioni">Affiliazioni:</label>
-                    <input type="number" id="realAffiliazioni" placeholder="Inserisci la produzione attuale per Affiliazioni">
-                </div>
-            </div>
-        </div>
-        <div style="margin-top: 20px;">
-            <button type="button" onclick="calcolaTargetMese()" style="width: 200px; padding: 10px; background-color: #33A1E3; color: white; border: none; border-radius: 5px; cursor: pointer;">Calcola</button>
-        </div>
-    </form>
-    <div id="targetMeseResult" class="result" style="margin-top: 20px;"></div>
-</div>
-
 
     <script>
         // Funzione per navigare tra le schede
@@ -407,6 +467,10 @@ function inviaReportWhatsApp(ragioneSociale, tipoGara, contrattiReal, contrattiM
 
     document.getElementById('targetMeseResult').innerHTML = messaggio;
 }
+    </script>
+</body>
+</html>
+
     </script>
 </body>
 </html>
