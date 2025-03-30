@@ -346,8 +346,12 @@
     <!-- 5. Gara Multibrand -->
     <div id="garaMultibrand" class="tab-content">
       <h2>Gara Multibrand</h2>
-      <p>Inserisci il numero di attivazioni per ogni brand, calcola il punteggio e scopri il bonus extra!</p>
+      <p>Inserisci il nome del negozio, il numero di attivazioni per ogni brand, calcola il punteggio e scopri il bonus extra!</p>
       <form>
+        <div class="form-group">
+          <label for="nomeNegozio">Nome Negozio:</label>
+          <input type="text" id="nomeNegozio" placeholder="Inserisci il nome del negozio">
+        </div>
         <div class="form-group">
           <label for="fastwebMobileRes">FASTWEB - Mobile Res:</label>
           <input type="number" id="fastwebMobileRes" placeholder="0">
@@ -399,6 +403,7 @@
         <button type="button" onclick="calcolaMultibrand()">Calcola Gara Multibrand</button>
       </form>
       <div id="multibrandResult" class="result"></div>
+      <button type="button" onclick="inviaReportMultibrand()">Invia Report WhatsApp</button>
     </div>
 
   </div> <!-- /container -->
@@ -452,11 +457,22 @@ function calcolaFatturato(totContratti, percBusiness) {
   const numBusiness = Math.ceil(totContratti * percBusiness);
   const numDomestici = totContratti - numBusiness;
   const compensoDom = calcolaCompensoDomestic(numDomestici);
-  const compensoBus = calcolaCompensoBusiness(numBusiness);
+
+  let compensoBus = 0;
+  let aumentoBusiness = false;
+  // Se il totale dei contratti supera 6, i business valgono 100€ ciascuno
+  if (totContratti > 6) {
+    compensoBus = numBusiness * 100;
+    aumentoBusiness = true;
+  } else {
+    // Altrimenti si applica la tariffa standard (85€ per contratto)
+    compensoBus = numBusiness * 85;
+  }
   return {
     business: numBusiness,
     domestici: numDomestici,
-    totale: compensoDom + compensoBus
+    totale: compensoDom + compensoBus,
+    aumentoBusiness: aumentoBusiness
   };
 }
 function calcolaContratti() {
@@ -473,14 +489,16 @@ function calcolaContratti() {
   let fatturatoFinale = 0;
   let domFinali = 0;
   let busFinali = 0;
+  let aumentoBusinessFlag = false;
 
   for (let i = 1; i <= 1000; i++) {
-    const { business, domestici, totale } = calcolaFatturato(i, percBusiness);
-    if (totale >= totaleSpese) {
+    const result = calcolaFatturato(i, percBusiness);
+    if (result.totale >= totaleSpese) {
       contrattiNecessari = i;
-      fatturatoFinale = totale;
-      domFinali = domestici;
-      busFinali = business;
+      fatturatoFinale = result.totale;
+      domFinali = result.domestici;
+      busFinali = result.business;
+      aumentoBusinessFlag = result.aumentoBusiness;
       break;
     }
   }
@@ -492,6 +510,9 @@ function calcolaContratti() {
       <p class="alert">Non è stato possibile coprire le spese neanche con 1000 contratti!</p>
     `;
   } else {
+    const avvisoBusiness = aumentoBusinessFlag
+      ? `<p class="alert">Attenzione: compenso maggiorato a 100€ per i business, poiché si hanno oltre 6 contratti totali!</p>`
+      : "";
     document.getElementById('contrattiResult').innerHTML = `
       <p><strong>Ragione Sociale:</strong> ${ragioneSociale}</p>
       <p><strong>Totale Spese del Negozio:</strong> €${totaleSpese.toFixed(2)}</p>
@@ -499,6 +520,7 @@ function calcolaContratti() {
       <p>- Domestici: ${domFinali}</p>
       <p>- Business: ${busFinali}</p>
       <p><strong>Fatturato Totale Stimato:</strong> €${fatturatoFinale.toFixed(2)}</p>
+      ${avvisoBusiness}
       <p class="success">Obiettivo raggiunto con ${contrattiNecessari} contratti!</p>
     `;
   }
@@ -511,17 +533,29 @@ function calcolaManuale() {
   const ragioneSociale = document.getElementById('manualRagioneSociale').value || "N/A";
   const cDom = parseInt(document.getElementById('contrattiDomestici').value) || 0;
   const cBus = parseInt(document.getElementById('contrattiBusiness').value) || 0;
+  const totContratti = cDom + cBus;
 
   const totaleDomestico = calcolaCompensoDomestic(cDom);
-  const totaleBusiness  = calcolaCompensoBusiness(cBus);
+  
+  let totaleBusiness, aumentoBusiness = false;
+  if (totContratti > 6) {
+    totaleBusiness = cBus * 100;
+    aumentoBusiness = true;
+  } else {
+    totaleBusiness = cBus * 85;
+  }
   const fatturatoTotale = totaleDomestico + totaleBusiness;
-  const totContratti = cDom + cBus;
+  
+  const avvisoBusiness = aumentoBusiness
+    ? `<p class="alert">Attenzione: compenso maggiorato a 100€ per i business, poiché si hanno oltre 6 contratti totali!</p>`
+    : "";
 
   document.getElementById('manualeResult').innerHTML = `
     <p><strong>Ragione Sociale:</strong> ${ragioneSociale}</p>
     <p><strong>Totale Contratti:</strong> ${totContratti} (Domestici: ${cDom}, Business: ${cBus})</p>
     <p><strong>Fatturato Domestici:</strong> €${totaleDomestico.toFixed(2)}</p>
     <p><strong>Fatturato Business:</strong> €${totaleBusiness.toFixed(2)}</p>
+    ${avvisoBusiness}
     <p class="success"><strong>Fatturato Totale:</strong> €${fatturatoTotale.toFixed(2)}</p>
   `;
 }
@@ -666,7 +700,6 @@ function calcolaMultibrand() {
   multibrandData.forEach(brand => {
     const attivazioni = parseInt(document.getElementById(brand.id).value) || 0;
     totalPoints += (attivazioni * brand.punteggio);
-
     if (brand.id !== 'provaSky') {
       if (attivazioni >= brand.minAtt) {
         brandAttivi++;
@@ -680,8 +713,7 @@ function calcolaMultibrand() {
 
   let bonusExtra = 0;
   let sogliaTrovata = 0;
-
-  // Cerchiamo la soglia più alta compatibile
+  // Cerchiamo la soglia più alta compatibile (iterando in ordine decrescente come da bonusTable)
   for (const row of bonusTable) {
     if (totalPoints >= row.soglia) {
       const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
@@ -695,20 +727,141 @@ function calcolaMultibrand() {
     }
   }
 
+  // Calcoliamo i punti mancanti per la soglia successiva
+  const soglieAsc = [10, 20, 40, 80, 110];
+  let nextThreshold = null;
+  for (let t of soglieAsc) {
+    if (t > sogliaTrovata) {
+      nextThreshold = t;
+      break;
+    }
+  }
+  let puntiMancanti = 0;
+  if (nextThreshold !== null) {
+    puntiMancanti = nextThreshold - totalPoints;
+    if (puntiMancanti < 0) puntiMancanti = 0;
+  }
+  
+  // Calcoliamo quanti contratti ACEA (punteggio 2 per contratto) servirebbero per coprire i punti mancanti
+  let contrattiAceaAggiuntivi = 0;
+  if (puntiMancanti > 0) {
+    contrattiAceaAggiuntivi = Math.ceil(puntiMancanti / 2);
+  }
+  
+  let bonusNext = 0;
+  if (nextThreshold !== null) {
+    for (const row of bonusTable) {
+      if (row.soglia === nextThreshold) {
+        const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
+        if (colIndex >= 0 && colIndex < row.bonus.length) {
+          bonusNext = row.bonus[colIndex];
+        }
+        break;
+      }
+    }
+  }
+
   const out = document.getElementById('multibrandResult');
   out.innerHTML = `
     <p><strong>Punteggio Totale:</strong> ${totalPoints.toFixed(2)}</p>
     <p><strong>Brand Attivi:</strong> ${brandAttivi}</p>
     <p><strong>Soglia Punti Raggiunta:</strong> ${sogliaTrovata > 0 ? sogliaTrovata + '+' : 'Nessuna'}</p>
-    <p><strong>Bonus Extra:</strong> €${bonusExtra}</p>
-    <p class="success">
-      ${
-        bonusExtra > 0
-          ? 'Complimenti! Hai sbloccato un extra sulla Gara Multibrand.'
-          : 'Non hai ancora sbloccato un bonus extra.'
-      }
-    </p>
+    <p><strong>Bonus Extra Attuale:</strong> €${bonusExtra}</p>
+    <p><strong>Punti mancanti per la soglia successiva:</strong> ${puntiMancanti}</p>
+    <p><strong>Guadagno Soglia Successiva:</strong> €${bonusNext}</p>
+    <p><strong>Proiezione ACEA:</strong> Aggiungi <em>${contrattiAceaAggiuntivi}</em> contratti ACEA per raggiungere la prossima soglia!</p>
+    <p class="success">Continua così, sei quasi al bonus extra! Non mollare!</p>
   `;
+}
+
+/* Funzione per inviare il report via WhatsApp dalla Gara Multibrand */
+function inviaReportMultibrand() {
+  const nomeNegozio = document.getElementById('nomeNegozio').value || "N/A";
+  let message = `*REPORT GARA MULTIBRAND*\n\n`;
+  message += `Negozio: *${nomeNegozio}*\n\n`;
+  
+  // Includiamo i valori dei campi (solo se > 0)
+  let fieldsMessage = "";
+  multibrandData.forEach(brand => {
+    const attivazioni = parseInt(document.getElementById(brand.id).value) || 0;
+    if(attivazioni > 0) {
+      fieldsMessage += `${brand.id}: ${attivazioni}\n`;
+    }
+  });
+  if(fieldsMessage) {
+    message += `Attivazioni:\n${fieldsMessage}\n`;
+  }
+  
+  // Ricalcoliamo i dati della Gara Multibrand
+  let totalPoints = 0;
+  let brandAttivi = 0;
+  multibrandData.forEach(brand => {
+    const attivazioni = parseInt(document.getElementById(brand.id).value) || 0;
+    totalPoints += (attivazioni * brand.punteggio);
+    if (brand.id !== 'provaSky') {
+      if (attivazioni >= brand.minAtt) {
+        brandAttivi++;
+      }
+    }
+  });
+  if (brandAttivi > 6) {
+    brandAttivi = 6;
+  }
+  let bonusExtra = 0;
+  let sogliaTrovata = 0;
+  for (const row of bonusTable) {
+    if (totalPoints >= row.soglia) {
+      const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
+      if (colIndex >= 0 && colIndex < row.bonus.length) {
+        bonusExtra = row.bonus[colIndex];
+      }
+      sogliaTrovata = row.soglia;
+      break;
+    }
+  }
+  const soglieAsc = [10, 20, 40, 80, 110];
+  let nextThreshold = null;
+  for (let t of soglieAsc) {
+    if (t > sogliaTrovata) {
+      nextThreshold = t;
+      break;
+    }
+  }
+  let puntiMancanti = 0;
+  if (nextThreshold !== null) {
+    puntiMancanti = nextThreshold - totalPoints;
+    if (puntiMancanti < 0) puntiMancanti = 0;
+  }
+  let bonusNext = 0;
+  if (nextThreshold !== null) {
+    for (const row of bonusTable) {
+      if (row.soglia === nextThreshold) {
+        const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
+        if (colIndex >= 0 && colIndex < row.bonus.length) {
+          bonusNext = row.bonus[colIndex];
+        }
+        break;
+      }
+    }
+  }
+  
+  // Calcoliamo quanti contratti ACEA aggiuntivi servono
+  let contrattiAceaAggiuntivi = 0;
+  if (puntiMancanti > 0) {
+    contrattiAceaAggiuntivi = Math.ceil(puntiMancanti / 2);
+  }
+  
+  message += `Punteggio Totale: *${totalPoints.toFixed(2)}*\n`;
+  message += `Brand Attivi: *${brandAttivi}*\n`;
+  message += `Soglia Punti Raggiunta: *${sogliaTrovata > 0 ? sogliaTrovata + '+' : 'Nessuna'}*\n`;
+  message += `Bonus Extra Raggiunto: *€${bonusExtra}*\n`;
+  message += `Punti mancanti per la soglia successiva: *${puntiMancanti}*\n`;
+  message += `Guadagno Soglia Successiva: *€${bonusNext}*\n`;
+  message += `Proiezione ACEA: Aggiungi *${contrattiAceaAggiuntivi}* contratti ACEA per raggiungere la prossima soglia!\n\n`;
+  message += `Sei sulla buona strada, continua così e non mollare: il bonus extra è a portata di mano!`;
+  
+  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+  window.open(url, '_blank');
 }
 
 /* Carica eventuali dati del target mese all'avvio */
@@ -719,4 +872,3 @@ window.onload = function() {
 
 </body>
 </html>
-
