@@ -4,210 +4,101 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=no, user-scalable=no" />
   <title>DEALER MANAGER</title>
-
-  <!--
-    Proposta di grafica "pastello", con palette di colori differenziata per ogni scheda.
-    Puoi cambiare i colori come preferisci: #f2e9ff, #e9fff2, #fff9e9, ecc.
-    Usa la definizione di :root per regolare facilmente la palette.
-  -->
   <style>
     :root {
-      /* Palette Pastello per ciascun pannello */
-      --color-gestioneCosti:       #f2e9ff; /* lilla molto chiaro */
-      --color-totaleGuadagni:     #e9fff2; /* verdino chiaro */
-      --color-produzioneGiornaliera: #fff9e9; /* giallino chiaro */
-      --color-targetMese:         #e9f2ff; /* azzurrino chiaro */
-      --color-garaMultibrand:     #ffe9f2; /* rosino chiaro */
-
-      /* Colore principale per tab attive */
+      --color-gestioneCosti: #f2e9ff;
+      --color-totaleGuadagni: #e9fff2;
+      --color-produzioneGiornaliera: #fff9e9;
+      --color-targetMese: #e9f2ff;
+      --color-garaMultibrand: #ffe9f2;
       --primary-color: #007BFF;
       --primary-hover: #0056b3;
       --text-color: #333;
       --body-bg: #f3f4f6;
     }
-
-    /* Reset / base */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      font-family: 'Roboto', sans-serif;
-      background-color: var(--body-bg);
-      color: var(--text-color);
-      line-height: 1.4;
+      font-family:'Roboto',sans-serif;
+      background:var(--body-bg);
+      color:var(--text-color);
+      line-height:1.4;
     }
-
     h1 {
-      text-align: center;
-      color: var(--primary-color);
-      margin-top: 20px;
-      margin-bottom: 10px;
+      text-align:center;
+      color:var(--primary-color);
+      margin:20px 0 10px;
     }
-
     .container {
-      max-width: 1100px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width:1100px;
+      margin:20px auto;
+      padding:20px;
+      background:#fff;
+      border-radius:8px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.1);
     }
-
-    /* 
-      TABS: impostiamo uno stile più vivace con hover e transizione.
-    */
     .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      margin-bottom: 20px;
-      gap: 10px;
+      display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px;
     }
     .tab {
-      padding: 12px 16px;
-      cursor: pointer;
-      font-weight: 500;
-      background-color: #f9f9f9;
-      border-radius: 5px;
-      color: var(--text-color);
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+      padding:12px 16px; cursor:pointer;
+      background:#f9f9f9; border-radius:5px;
+      box-shadow:0 1px 4px rgba(0,0,0,0.1);
+      transition:0.3s; font-weight:500;
     }
-    .tab:hover {
-      background-color: #efefef;
-      transform: translateY(-2px);
-    }
-    .tab.active {
-      background-color: var(--primary-color);
-      color: #fff;
-      transform: none;
-    }
-
-    /*
-      CONTENUTO DEI TABS:
-      qui diamo sfondi diversi a seconda dell'ID per differenziare i pannelli.
-    */
+    .tab:hover { background:#efefef; transform:translateY(-2px); }
+    .tab.active { background:var(--primary-color); color:#fff; transform:none; }
     .tab-content {
-      display: none;
-      padding: 20px;
-      border-radius: 8px;
-      /* Box shadow leggero per far risaltare la sezione */
-      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.06);
-      margin-bottom: 10px;
+      display:none; padding:20px; border-radius:8px;
+      box-shadow:inset 0 0 10px rgba(0,0,0,0.06);
+      margin-bottom:10px;
     }
-    .tab-content.active {
-      display: block;
+    .tab-content.active { display:block; }
+    #gestioneCosti { background:var(--color-gestioneCosti); }
+    #totaleGuadagni { background:var(--color-totaleGuadagni); }
+    #produzioneGiornaliera { background:var(--color-produzioneGiornaliera); }
+    #targetMese { background:var(--color-targetMese); }
+    #garaMultibrand { background:var(--color-garaMultibrand); }
+    .form-group { margin-bottom:15px; }
+    label { display:block; font-weight:bold; margin-bottom:5px; }
+    input, select, button {
+      width:100%; padding:10px; font-size:16px;
+      border:1px solid #ccc; border-radius:5px;
     }
-
-    /* Distinzione dei pannelli con sfondi colorati */
-    #gestioneCosti {
-      background-color: var(--color-gestioneCosti);
+    .flex-row {
+      display:flex; gap:20px; margin-bottom:15px;
     }
-    #totaleGuadagni {
-      background-color: var(--color-totaleGuadagni);
+    .flex-col {
+      display:flex; flex-direction:column; gap:10px; flex:1;
     }
-    #produzioneGiornaliera {
-      background-color: var(--color-produzioneGiornaliera);
-    }
-    #targetMese {
-      background-color: var(--color-targetMese);
-    }
-    #garaMultibrand {
-      background-color: var(--color-garaMultibrand);
-    }
-
-    /* Altri componenti del form */
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-    input,
-    select,
     button {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      box-sizing: border-box;
+      background:var(--primary-color); color:#fff;
+      border:none; border-radius:5px; margin-top:5px;
+      transition:0.3s; cursor:pointer;
     }
-
-    button {
-      background-color: var(--primary-color);
-      color: white;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      padding: 10px;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      margin-top: 5px;
-    }
-    button:hover {
-      background-color: var(--primary-hover);
-      transform: scale(1.02);
-    }
-    button:active {
-      transform: scale(0.98);
-    }
-
-    .button-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .button-group button {
-      flex: 1;
-    }
-
+    button:hover { background:var(--primary-hover); transform:scale(1.02); }
+    button:active { transform:scale(0.98); }
+    .button-group { display:flex; gap:10px; margin-top:15px; }
+    .button-group button { flex:1; }
     .result {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 5px;
-      background-color: #ffffffb5;
-      border: 1px solid #c1e1c1;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-top:20px; padding:15px;
+      background:rgba(255,255,255,0.7);
+      border:1px solid #c1e1c1; border-radius:5px;
+      box-shadow:0 2px 5px rgba(0,0,0,0.1);
+      font-weight:bold;
     }
-
-    .success {
-      color: green;
+    .success { color:green; }
+    .alert { color:red; }
+    .brand-list { display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+    .brand { flex:1; padding:8px; border-radius:4px; text-align:center; }
+    .brand.active  { background:lightgreen; }
+    .brand.partial { background:khaki; }
+    .brand.missing { background:salmon; }
+    @media(max-width:768px){
+      .flex-row { flex-direction:column; }
     }
-    .alert {
-      color: red;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .tabs {
-        gap: 5px;
-      }
-      .tab {
-        flex: 1 1 calc(50% - 5px);
-        text-align: center;
-      }
-      .tab:nth-child(5) {
-        flex: 1 1 100%;
-      }
-    }
-    @media (max-width: 480px) {
-      .tab {
-        flex: 1 1 100%;
-        margin-bottom: 5px;
-      }
-      input,
-      select,
-      button {
-        font-size: 14px;
-        padding: 8px;
-      }
+    @media(max-width:480px){
+      input,select,button{font-size:14px;padding:8px;}
+      .tab{flex:1 1 100%;margin-bottom:5px;}
     }
   </style>
 </head>
@@ -215,8 +106,6 @@
 
   <h1>DEALER MANAGER</h1>
   <div class="container">
-
-    <!-- TABS -->
     <div class="tabs">
       <div class="tab active" onclick="showTab('gestioneCosti')">Gestione Costi</div>
       <div class="tab" onclick="showTab('totaleGuadagni')">Totale Guadagni</div>
@@ -235,19 +124,19 @@
         </div>
         <div class="form-group">
           <label for="affitto">Affitto (€):</label>
-          <input type="number" id="affitto" placeholder="Inserisci il costo dell'affitto">
+          <input type="number" id="affitto">
         </div>
         <div class="form-group">
           <label for="costoPersonale">Costo Personale (€):</label>
-          <input type="number" id="costoPersonale" placeholder="Inserisci il costo del personale">
+          <input type="number" id="costoPersonale">
         </div>
         <div class="form-group">
           <label for="utenze">Utenze (€):</label>
-          <input type="number" id="utenze" placeholder="Inserisci il costo delle utenze">
+          <input type="number" id="utenze">
         </div>
         <div class="form-group">
           <input type="checkbox" id="guadagni">
-          <label for="guadagni">Aumenta i guadagni con il 20% di contratti business</label>
+          <label for="guadagni">+20% contratti business</label>
         </div>
         <button type="button" onclick="calcolaContratti()">Calcola</button>
       </form>
@@ -260,15 +149,15 @@
       <form>
         <div class="form-group">
           <label for="manualRagioneSociale">Ragione Sociale:</label>
-          <input type="text" id="manualRagioneSociale" placeholder="Inserisci la ragione sociale">
+          <input type="text" id="manualRagioneSociale">
         </div>
         <div class="form-group">
           <label for="contrattiDomestici">Contratti Domestici:</label>
-          <input type="number" id="contrattiDomestici" placeholder="Inserisci il numero di contratti domestici">
+          <input type="number" id="contrattiDomestici">
         </div>
         <div class="form-group">
           <label for="contrattiBusiness">Contratti Business:</label>
-          <input type="number" id="contrattiBusiness" placeholder="Inserisci il numero di contratti business">
+          <input type="number" id="contrattiBusiness">
         </div>
         <button type="button" onclick="calcolaManuale()">Calcola</button>
       </form>
@@ -281,15 +170,15 @@
       <form>
         <div class="form-group">
           <label for="produzioneRagioneSociale">Ragione Sociale:</label>
-          <input type="text" id="produzioneRagioneSociale" placeholder="Inserisci la ragione sociale">
+          <input type="text" id="produzioneRagioneSociale">
         </div>
         <div class="form-group">
-          <label for="targetContratti">Obiettivo Contratti (totale):</label>
-          <input type="number" id="targetContratti" placeholder="Inserisci l'obiettivo totale di contratti">
+          <label for="targetContratti">Obiettivo Contratti:</label>
+          <input type="number" id="targetContratti">
         </div>
         <div class="form-group">
-          <label for="contrattiReal">Contratti Attualmente Inseriti:</label>
-          <input type="number" id="contrattiReal" placeholder="Inserisci il numero di contratti attuali">
+          <label for="contrattiReal">Contratti Inseriti:</label>
+          <input type="number" id="contrattiReal">
         </div>
         <button type="button" onclick="calcolaProduzione()">Calcola</button>
       </form>
@@ -300,42 +189,22 @@
     <div id="targetMese" class="tab-content">
       <h2>Target Mese</h2>
       <form>
-        <div style="display: flex; flex-wrap: wrap; gap: 20px;">
-          <!-- Parte sinistra: Target da raggiungere -->
-          <div style="flex: 1; min-width: 250px;">
-            <h3>Target da Raggiungere</h3>
-            <div class="form-group">
-              <label for="targetProduzione">Produzione/Contratti:</label>
-              <input type="number" id="targetProduzione" placeholder="Inserisci il target">
-            </div>
-            <div class="form-group">
-              <label for="targetProduttivi">Produttivi:</label>
-              <input type="number" id="targetProduttivi" placeholder="Inserisci il target">
-            </div>
-            <div class="form-group">
-              <label for="targetAffiliazioni">Affiliazioni:</label>
-              <input type="number" id="targetAffiliazioni" placeholder="Inserisci il target">
-            </div>
+        <div style="display:flex;flex-wrap:wrap;gap:20px;">
+          <div style="flex:1;min-width:250px;">
+            <h3>Target</h3>
+            <div class="form-group"><label>Contratti:</label><input id="targetProduzione" type="number"></div>
+            <div class="form-group"><label>Produttivi:</label><input id="targetProduttivi" type="number"></div>
+            <div class="form-group"><label>Affiliazioni:</label><input id="targetAffiliazioni" type="number"></div>
             <div class="button-group">
-              <button type="button" onclick="salvaTarget()">Salva Target</button>
+              <button type="button" onclick="salvaTarget()">Salva</button>
               <button type="button" onclick="resetForm()">Reset</button>
             </div>
           </div>
-          <!-- Parte destra: Produzione attuale -->
-          <div style="flex: 1; min-width: 250px;">
-            <h3>Produzione Attuale (REAL)</h3>
-            <div class="form-group">
-              <label for="realProduzione">Produzione/Contratti:</label>
-              <input type="number" id="realProduzione" placeholder="Inserisci il valore attuale">
-            </div>
-            <div class="form-group">
-              <label for="realProduttivi">Produttivi:</label>
-              <input type="number" id="realProduttivi" placeholder="Inserisci il valore attuale">
-            </div>
-            <div class="form-group">
-              <label for="realAffiliazioni">Affiliazioni:</label>
-              <input type="number" id="realAffiliazioni" placeholder="Inserisci il valore attuale">
-            </div>
+          <div style="flex:1;min-width:250px;">
+            <h3>Real</h3>
+            <div class="form-group"><label>Contratti:</label><input id="realProduzione" type="number"></div>
+            <div class="form-group"><label>Produttivi:</label><input id="realProduttivi" type="number"></div>
+            <div class="form-group"><label>Affiliazioni:</label><input id="realAffiliazioni" type="number"></div>
             <button type="button" onclick="calcolaTargetMese()">Calcola</button>
           </div>
         </div>
@@ -346,70 +215,62 @@
     <!-- 5. Gara Multibrand -->
     <div id="garaMultibrand" class="tab-content">
       <h2>Gara Multibrand</h2>
-      <p>Inserisci il nome del negozio, il numero di attivazioni per ogni brand, calcola il punteggio e scopri il bonus extra!</p>
       <form>
         <div class="form-group">
           <label for="nomeNegozio">Nome Negozio:</label>
           <input type="text" id="nomeNegozio" placeholder="Inserisci il nome del negozio">
         </div>
+
+        <!-- Fastweb -->
         <div class="form-group">
-          <label for="fastwebMobileRes">FASTWEB - Mobile Res:</label>
-          <input type="number" id="fastwebMobileRes" placeholder="0">
+          <label>Fastweb:</label>
+          <div class="flex-col">
+            <input type="number" id="fastwebSIM"    placeholder="SIM (min 10)">
+            <input type="number" id="fastwebFISSI"  placeholder="Fissi (min 1)">
+            <input type="number" id="fastwebENERGY" placeholder="Energy (min 1)">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="fastwebFissoRes">FASTWEB - Fisso Res:</label>
-          <input type="number" id="fastwebFissoRes" placeholder="0">
+
+        <!-- Tiscali & Acea -->
+        <div class="flex-row">
+          <div class="form-group flex-col">
+            <label>Tiscali:</label>
+            <input type="number" id="tiscaliSIM"   placeholder="SIM (min 10)">
+            <input type="number" id="tiscaliFISSI" placeholder="Fissi (opzionale)">
+          </div>
+          <div class="form-group flex-col">
+            <label for="aceaCONTRATTI">Acea Contratti (min 6):</label>
+            <input type="number" id="aceaCONTRATTI">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="fastwebFissoBus">FASTWEB - Fisso Bus:</label>
-          <input type="number" id="fastwebFissoBus" placeholder="0">
+
+        <!-- Sky, Efficiency & Rent -->
+        <div class="flex-row">
+          <div class="form-group flex-col">
+            <label for="skyCONTRATTI">Sky Contratti (min 2):</label>
+            <input type="number" id="skyCONTRATTI">
+          </div>
+          <div class="form-group flex-col">
+            <label>Efficiency:</label>
+            <input type="number" id="effLeads" placeholder="Leads (min 5)">
+            <input type="number" id="effContr" placeholder="Contratti (min 1)">
+          </div>
+          <div class="form-group flex-col">
+            <label for="rentCONTRATTI">Rent Contratti (min 1):</label>
+            <input type="number" id="rentCONTRATTI">
+          </div>
         </div>
-        <div class="form-group">
-          <label for="fastwebEnergy">FASTWEB - Energy:</label>
-          <input type="number" id="fastwebEnergy" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="tiscaliMobileRes">TISCALI - Mobile Res:</label>
-          <input type="number" id="tiscaliMobileRes" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="tiscaliFissoBus">TISCALI - Fisso Bus:</label>
-          <input type="number" id="tiscaliFissoBus" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="aenergiaLuceGas">ACEA ENERGIA - Luce &amp; Gas:</label>
-          <input type="number" id="aenergiaLuceGas" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="sky">SKY:</label>
-          <input type="number" id="sky" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="provaSky">Prova SKY:</label>
-          <input type="number" id="provaSky" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="efficiencyLead">EFFICIENCY - Lead:</label>
-          <input type="number" id="efficiencyLead" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="efficiencyContratto">EFFICIENCY - Contratto:</label>
-          <input type="number" id="efficiencyContratto" placeholder="0">
-        </div>
-        <div class="form-group">
-          <label for="rentContratto">RENT - Contratto:</label>
-          <input type="number" id="rentContratto" placeholder="0">
-        </div>
+
         <button type="button" onclick="calcolaMultibrand()">Calcola Gara Multibrand</button>
       </form>
+
       <div id="multibrandResult" class="result"></div>
       <button type="button" onclick="inviaReportMultibrand()">Invia Report WhatsApp</button>
     </div>
+  </div>
 
-  </div> <!-- /container -->
-
-<script>
-/* =====================
+  <script>
+    /* =====================
    NAVIGAZIONE TABS
 ===================== */
 function showTab(tabId) {
@@ -511,7 +372,7 @@ function calcolaContratti() {
     `;
   } else {
     const avvisoBusiness = aumentoBusinessFlag
-      ? `<p class="alert">Attenzione: compenso maggiorato a 100€ per i business, poiché si hanno oltre 6 contratti totali!</p>`
+      ? `<p class="alert">Superando i 10 contratti, quelli business valgono 100€</p>`
       : "";
     document.getElementById('contrattiResult').innerHTML = `
       <p><strong>Ragione Sociale:</strong> ${ragioneSociale}</p>
@@ -526,10 +387,8 @@ function calcolaContratti() {
   }
 }
 
-/* =====================
-   TOTALE GUADAGNI
-===================== */
-function calcolaManuale() {
+
+    function calcolaManuale() {
   const ragioneSociale = document.getElementById('manualRagioneSociale').value || "N/A";
   const cDom = parseInt(document.getElementById('contrattiDomestici').value) || 0;
   const cBus = parseInt(document.getElementById('contrattiBusiness').value) || 0;
@@ -538,7 +397,7 @@ function calcolaManuale() {
   const totaleDomestico = calcolaCompensoDomestic(cDom);
   
   let totaleBusiness, aumentoBusiness = false;
-  if (totContratti > 6) {
+  if (totContratti > 10) {
     totaleBusiness = cBus * 100;
     aumentoBusiness = true;
   } else {
@@ -547,7 +406,7 @@ function calcolaManuale() {
   const fatturatoTotale = totaleDomestico + totaleBusiness;
   
   const avvisoBusiness = aumentoBusiness
-    ? `<p class="alert">Attenzione: compenso maggiorato a 100€ per i business, poiché si hanno oltre 6 contratti totali!</p>`
+    ? `<p class="alert">Attenzione: compenso maggiorato a 100€ per i business, poiché si hanno oltre 10 contratti totali!</p>`
     : "";
 
   document.getElementById('manualeResult').innerHTML = `
@@ -560,10 +419,7 @@ function calcolaManuale() {
   `;
 }
 
-/* =====================
-   PRODUZIONE GIORNALIERA
-===================== */
-function calcolaProduzione() {
+    function calcolaProduzione() {
   const ragioneSociale = document.getElementById('produzioneRagioneSociale').value || "N/A";
   const targetContratti = parseInt(document.getElementById('targetContratti').value) || 0;
   const contrattiReal = parseInt(document.getElementById('contrattiReal').value) || 0;
@@ -609,37 +465,28 @@ Continua a lavorare con costanza e determinazione per raggiungere il tuo obietti
   window.open(url, '_blank');
 }
 
-/* =====================
-   TARGET MESE
-===================== */
-function salvaTarget() {
-  const tp = document.getElementById('targetProduzione').value || 0;
-  const tpr = document.getElementById('targetProduttivi').value || 0;
-  const taf = document.getElementById('targetAffiliazioni').value || 0;
-
-  const data = { produzione: tp, produttivi: tpr, affiliazioni: taf };
-  localStorage.setItem('targetMese', JSON.stringify(data));
-  alert('Target salvato con successo!');
-}
-function caricaTarget() {
-  const saved = JSON.parse(localStorage.getItem('targetMese'));
-  if (saved) {
-    document.getElementById('targetProduzione').value   = saved.produzione;
-    document.getElementById('targetProduttivi').value   = saved.produttivi;
-    document.getElementById('targetAffiliazioni').value = saved.affiliazioni;
-  }
-}
-function resetForm() {
-  document.getElementById('targetProduzione').value = '';
-  document.getElementById('targetProduttivi').value = '';
-  document.getElementById('targetAffiliazioni').value = '';
-  document.getElementById('realProduzione').value = '';
-  document.getElementById('realProduttivi').value = '';
-  document.getElementById('realAffiliazioni').value = '';
-  localStorage.removeItem('targetMese');
-  alert('Form resettato con successo!');
-}
-function calcolaTargetMese() {
+    function salvaTarget(){
+      localStorage.setItem('targetMese', JSON.stringify({
+        p:+document.getElementById('targetProduzione').value||0,
+        r:+document.getElementById('targetProduttivi').value||0,
+        a:+document.getElementById('targetAffiliazioni').value||0
+      }));
+      alert('Salvato');
+    }
+    function caricaTarget(){
+      const d=JSON.parse(localStorage.getItem('targetMese')||'{}');
+      if(d.p!=null) document.getElementById('targetProduzione').value=d.p;
+      if(d.r!=null) document.getElementById('targetProduttivi').value=d.r;
+      if(d.a!=null) document.getElementById('targetAffiliazioni').value=d.a;
+    }
+    function resetForm(){
+      ['targetProduzione','targetProduttivi','targetAffiliazioni',
+       'realProduzione','realProduttivi','realAffiliazioni']
+      .forEach(id=>document.getElementById(id).value='');
+      localStorage.removeItem('targetMese');
+      alert('Reset OK');
+    }
+    function calcolaTargetMese() {
   const tp = parseInt(document.getElementById('targetProduzione').value) || 0;
   const tpr = parseInt(document.getElementById('targetProduttivi').value) || 0;
   const taf = parseInt(document.getElementById('targetAffiliazioni').value) || 0;
@@ -668,207 +515,191 @@ function calcolaTargetMese() {
   document.getElementById('targetMeseResult').innerHTML = msg;
 }
 
-/* =====================
-   GARA MULTIBRAND
-===================== */
-const multibrandData = [
-  { id: 'fastwebMobileRes',    minAtt: 10, punteggio: 0.25 },
-  { id: 'fastwebFissoRes',     minAtt: 1,  punteggio: 1    },
-  { id: 'fastwebFissoBus',     minAtt: 1,  punteggio: 2    },
-  { id: 'fastwebEnergy',       minAtt: 1,  punteggio: 2    },
-  { id: 'tiscaliMobileRes',    minAtt: 10, punteggio: 0.25 },
-  { id: 'tiscaliFissoBus',     minAtt: 1,  punteggio: 2    },
-  { id: 'aenergiaLuceGas',     minAtt: 6,  punteggio: 2    },
-  { id: 'sky',                 minAtt: 2,  punteggio: 2    },
-  { id: 'provaSky',            minAtt: 0,  punteggio: 0    },
-  { id: 'efficiencyLead',      minAtt: 1,  punteggio: 1    },
-  { id: 'efficiencyContratto', minAtt: 5,  punteggio: 5    },
-  { id: 'rentContratto',       minAtt: 1,  punteggio: 5    },
-];
-const bonusTable = [
-  { soglia: 110, bonus: [400, 800, 1200, 1300, 1500] },
-  { soglia: 80,  bonus: [300, 600, 900, 1000, 1200] },
-  { soglia: 40,  bonus: [200, 400, 600, 700, 850] },
-  { soglia: 20,  bonus: [100, 200, 300, 350, 400] },
-  { soglia: 10,  bonus: [50, 100, 150, 200, 250] },
-];
 
-function calcolaMultibrand() {
-  let totalPoints = 0;
-  let brandAttivi = 0;
+    // *** Gara Multibrand Logic ***
+    const brands = [
+      { name:'Fastweb', vals:[0,0,0], min:[10,1,1], score:[0.25,1,2] },
+      { name:'Tiscali', vals:[0,0],    min:[10,0], score:[0.25,2] },  // secondo valore opzionale
+      { name:'Acea',   vals:[0],      min:[6],   score:[2] },
+      { name:'Sky',    vals:[0],      min:[2],   score:[2] },
+      { name:'Efficiency', vals:[0,0],min:[5,1], score:[1,5] },
+      { name:'Rent',   vals:[0],      min:[1],   score:[5] }
+    ];
+    const bonusTable = [
+      { sog:110, bonus:[400,800,1200,1300,1500] },
+      { sog:80,  bonus:[300,600, 900,1000,1200] },
+      { sog:40,  bonus:[200,400, 600, 700, 850] },
+      { sog:20,  bonus:[100,200, 300, 350, 400] },
+      { sog:10,  bonus:[ 50,100, 150, 200, 250] }
+    ];
 
-  multibrandData.forEach(brand => {
-    const attivazioni = parseInt(document.getElementById(brand.id).value) || 0;
-    totalPoints += (attivazioni * brand.punteggio);
-    if (brand.id !== 'provaSky') {
-      if (attivazioni >= brand.minAtt) {
-        brandAttivi++;
+    function calcolaMultibrand(){
+      // leggi valori da input
+      brands[0].vals = [
+        +document.getElementById('fastwebSIM').value||0,
+        +document.getElementById('fastwebFISSI').value||0,
+        +document.getElementById('fastwebENERGY').value||0
+      ];
+      brands[1].vals = [
+        +document.getElementById('tiscaliSIM').value||0,
+        +document.getElementById('tiscaliFISSI').value||0
+      ];
+      brands[2].vals = [ +document.getElementById('aceaCONTRATTI').value||0 ];
+      brands[3].vals = [ +document.getElementById('skyCONTRATTI').value||0 ];
+      brands[4].vals = [
+        +document.getElementById('effLeads').value||0,
+        +document.getElementById('effContr').value||0
+      ];
+      brands[5].vals = [ +document.getElementById('rentCONTRATTI').value||0 ];
+
+      let pts=0, activeCount=0, partials=[];
+            brands.forEach(b=>{
+        // se min[i] == 0 => campo opzionale, ignora nella verifica
+        const okAll = b.min.every((m,i)=> m === 0 ? true : b.vals[i] >= m);
+        const some  = b.vals.some(v=> v > 0);
+        b.active  = okAll;
+        b.partial = !okAll && some;
+        if (b.active)  activeCount++;
+        if (b.partial) partials.push(b);
+        b.vals.forEach((v,i)=> pts += v * b.score[i]);
+      });
+
+
+      const out = document.getElementById('multibrandResult');
+      // caso tutti zero
+      if(brands.every(b=>b.vals.every(v=>v===0))){
+        out.innerHTML = `
+          <p class="alert"><strong>Per maturare bonus servono almeno 2 brand attivi.</strong></p>
+          <p class="alert">Per attivare almeno 2 brand raggiungi le soglie:</p>
+          <ul>
+            <li><strong>Fastweb:</strong> 10 SIM, 1 Fisso, 1 Energy</li>
+            <li><strong>Tiscali:</strong> 10 SIM</li>
+            <li><strong>Acea:</strong> 6 contratti</li>
+            <li><strong>Sky:</strong> 2 contratti</li>
+            <li><strong>Efficiency:</strong> 5 leads, 1 contratto</li>
+            <li><strong>Rent:</strong> 1 contratto</li>
+          </ul>
+          <p class="alert"><em>Al momento non sei in gara</em></p>
+        `;
+        return;
       }
-    }
-  });
 
-  if (brandAttivi > 6) {
-    brandAttivi = 6;
-  }
+      // calcola bonus corrente se >=2 attivi
+      let currTh=0, currBonus=0;
+      if(activeCount>=2){
+        for(let r of bonusTable){
+          if(pts>=r.sog){
+            currTh = r.sog;
+            currBonus = r.bonus[activeCount-2]||0;
+            break;
+          }
+        }
+      }
 
-  let bonusExtra = 0;
-  let sogliaTrovata = 0;
-  // Cerchiamo la soglia più alta compatibile (iterando in ordine decrescente come da bonusTable)
-  for (const row of bonusTable) {
-    if (totalPoints >= row.soglia) {
-      const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
-      if (colIndex >= 0 && colIndex < row.bonus.length) {
-        bonusExtra = row.bonus[colIndex];
+      // simula attivazione partial
+      let hypoPts = pts, hypoAct = activeCount;
+      partials.forEach(b=>{
+        hypoAct++;
+        b.min.forEach((m,i)=>{
+          const miss = Math.max(0, m - b.vals[i]);
+          hypoPts += miss * b.score[i];
+        });
+      });
+      let hypoBonus = 0;
+      if(hypoAct>=2){
+        for(let r of bonusTable){
+          if(hypoPts>=r.sog){
+            hypoBonus = r.bonus[hypoAct-2]||0;
+            break;
+          }
+        }
+      }
+
+      // soglia successiva
+      const asc = [10,20,40,80,110];
+      const next = asc.find(x=>x>currTh) || null;
+      const missPts = next ? Math.max(0, next - pts) : 0;
+      const bonusNext = next
+        ? bonusTable.find(r=>r.sog===next).bonus[Math.max(0,activeCount-2)]||0
+        : 0;
+      const needAcea = next ? Math.ceil(missPts/2) : 0;
+
+      // costruisci HTML
+      let html = `
+        <p><strong>Punteggio Totale:</strong> ${pts.toFixed(2)}</p>
+        <p><strong>Brand Attivi:</strong> ${activeCount}/6</p>
+        <div class="brand-list">`;
+      brands.forEach(b=>{
+        const cls = b.active  ? 'active'
+                  : b.partial ? 'partial'
+                  :              'missing';
+        html += `<div class="brand ${cls}">${b.name}</div>`;
+      });
+      html += `</div>`;
+
+      if(activeCount<2){
+        html += `<p class="alert"><strong>Per maturare bonus servono almeno 2 brand attivi.</strong></p>`;
+        if(partials.length){
+          html += `<p><strong>Hai iniziato a popolare ${partials.length} brand:</strong></p><ul>`;
+          partials.forEach(b=>{
+            const misses = [];
+            b.min.forEach((m,i)=>{
+              const miss = Math.max(0, m - b.vals[i]);
+              if(miss>0){
+                const labels = ['SIM','Fissi','Energy','SIM','Fissi','LuceGas','Contratti','Leads','Contratti','Contratti'];
+                misses.push(`${miss} ${labels[i]}`);
+              }
+            });
+            html += `<li><strong>${b.name}:</strong> manca ${misses.join(', ')}</li>`;
+          });
+          html += `</ul>
+            <p><strong>Potresti maturare:</strong> €${hypoBonus} attivando questi brand</p>`;
+        } else {
+          html += `<p>Mancano 2 brand da attivare:</p><ul>`;
+          brands.filter(b=>!b.active).slice(0,2).forEach(b=>{
+            const req = {
+              Fastweb:    '10 SIM, 1 Fisso, 1 Energy',
+              Tiscali:    '10 SIM',
+              Acea:       '6 contratti',
+              Sky:        '2 contratti',
+              Efficiency: '5 leads, 1 contratto',
+              Rent:       '1 contratto'
+            }[b.name];
+            html += `<li><strong>${b.name}:</strong> ${req}</li>`;
+          });
+          html += `</ul>`;
+        }
       } else {
-        bonusExtra = 0;
+        html += `
+          <p><strong>Soglia raggiunta:</strong> ${currTh ? currTh + '+' : 'Nessuna'}</p>
+          <p><strong>Bonus attuale:</strong> €${currBonus}</p>`;
       }
-      sogliaTrovata = row.soglia;
-      break;
-    }
-  }
 
-  // Calcoliamo i punti mancanti per la soglia successiva
-  const soglieAsc = [10, 20, 40, 80, 110];
-  let nextThreshold = null;
-  for (let t of soglieAsc) {
-    if (t > sogliaTrovata) {
-      nextThreshold = t;
-      break;
-    }
-  }
-  let puntiMancanti = 0;
-  if (nextThreshold !== null) {
-    puntiMancanti = nextThreshold - totalPoints;
-    if (puntiMancanti < 0) puntiMancanti = 0;
-  }
-  
-  // Calcoliamo quanti contratti ACEA (punteggio 2 per contratto) servirebbero per coprire i punti mancanti
-  let contrattiAceaAggiuntivi = 0;
-  if (puntiMancanti > 0) {
-    contrattiAceaAggiuntivi = Math.ceil(puntiMancanti / 2);
-  }
-  
-  let bonusNext = 0;
-  if (nextThreshold !== null) {
-    for (const row of bonusTable) {
-      if (row.soglia === nextThreshold) {
-        const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
-        if (colIndex >= 0 && colIndex < row.bonus.length) {
-          bonusNext = row.bonus[colIndex];
-        }
-        break;
+      if(activeCount>=2){
+        html += `
+          <p><strong>Punti mancanti per soglia successiva:</strong> ${missPts.toFixed(2)}</p>
+          <p><strong>Bonus next:</strong> €${bonusNext}</p>
+          <p><strong>Servono ${needAcea} contratti ACEA</strong> per arrivare a ${next} punti!</p>
+          <p class="success">Continua così, sei quasi al bonus extra!</p>
+        `;
       }
-    }
-  }
 
-  const out = document.getElementById('multibrandResult');
-  out.innerHTML = `
-    <p><strong>Punteggio Totale:</strong> ${totalPoints.toFixed(2)}</p>
-    <p><strong>Brand Attivi:</strong> ${brandAttivi}</p>
-    <p><strong>Soglia Punti Raggiunta:</strong> ${sogliaTrovata > 0 ? sogliaTrovata + '+' : 'Nessuna'}</p>
-    <p><strong>Bonus Extra Attuale:</strong> €${bonusExtra}</p>
-    <p><strong>Punti mancanti per la soglia successiva:</strong> ${puntiMancanti}</p>
-    <p><strong>Guadagno Soglia Successiva:</strong> €${bonusNext}</p>
-    <p><strong>Proiezione ACEA:</strong> Aggiungi <em>${contrattiAceaAggiuntivi}</em> contratti ACEA per raggiungere la prossima soglia!</p>
-    <p class="success">Continua così, sei quasi al bonus extra! Non mollare!</p>
-  `;
-}
+      out.innerHTML = html;
+    }
 
-/* Funzione per inviare il report via WhatsApp dalla Gara Multibrand */
-function inviaReportMultibrand() {
-  const nomeNegozio = document.getElementById('nomeNegozio').value || "N/A";
-  let message = `*REPORT GARA MULTIBRAND*\n\n`;
-  message += `Negozio: *${nomeNegozio}*\n\n`;
-  
-  // Includiamo i valori dei campi (solo se > 0)
-  let fieldsMessage = "";
-  multibrandData.forEach(brand => {
-    const attivazioni = parseInt(document.getElementById(brand.id).value) || 0;
-    if(attivazioni > 0) {
-      fieldsMessage += `${brand.id}: ${attivazioni}\n`;
+    function inviaReportMultibrand(){
+      let msg = `*GARA MULTIBRAND*\nNegozio: ${document.getElementById('nomeNegozio').value||'N/A'}\n\n`;
+      brands.forEach(b=>{
+        b.vals.forEach((v,i)=>{
+          if(v>0){
+            const labels = ['SIM','Fissi','Energy','SIM','Fissi','LuceGas','Contratti','Leads','Contratti','Contratti'];
+            msg += `${b.name} ${labels[i]}: ${v}\n`;
+          }
+        });
+      });
+      msg += `\n${document.getElementById('multibrandResult').innerText}`;
+      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
     }
-  });
-  if(fieldsMessage) {
-    message += `Attivazioni:\n${fieldsMessage}\n`;
-  }
-  
-  // Ricalcoliamo i dati della Gara Multibrand
-  let totalPoints = 0;
-  let brandAttivi = 0;
-  multibrandData.forEach(brand => {
-    const attivazioni = parseInt(document.getElementById(brand.id).value) || 0;
-    totalPoints += (attivazioni * brand.punteggio);
-    if (brand.id !== 'provaSky') {
-      if (attivazioni >= brand.minAtt) {
-        brandAttivi++;
-      }
-    }
-  });
-  if (brandAttivi > 6) {
-    brandAttivi = 6;
-  }
-  let bonusExtra = 0;
-  let sogliaTrovata = 0;
-  for (const row of bonusTable) {
-    if (totalPoints >= row.soglia) {
-      const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
-      if (colIndex >= 0 && colIndex < row.bonus.length) {
-        bonusExtra = row.bonus[colIndex];
-      }
-      sogliaTrovata = row.soglia;
-      break;
-    }
-  }
-  const soglieAsc = [10, 20, 40, 80, 110];
-  let nextThreshold = null;
-  for (let t of soglieAsc) {
-    if (t > sogliaTrovata) {
-      nextThreshold = t;
-      break;
-    }
-  }
-  let puntiMancanti = 0;
-  if (nextThreshold !== null) {
-    puntiMancanti = nextThreshold - totalPoints;
-    if (puntiMancanti < 0) puntiMancanti = 0;
-  }
-  let bonusNext = 0;
-  if (nextThreshold !== null) {
-    for (const row of bonusTable) {
-      if (row.soglia === nextThreshold) {
-        const colIndex = (brandAttivi < 2) ? -1 : (brandAttivi - 2);
-        if (colIndex >= 0 && colIndex < row.bonus.length) {
-          bonusNext = row.bonus[colIndex];
-        }
-        break;
-      }
-    }
-  }
-  
-  // Calcoliamo quanti contratti ACEA aggiuntivi servono
-  let contrattiAceaAggiuntivi = 0;
-  if (puntiMancanti > 0) {
-    contrattiAceaAggiuntivi = Math.ceil(puntiMancanti / 2);
-  }
-  
-  message += `Punteggio Totale: *${totalPoints.toFixed(2)}*\n`;
-  message += `Brand Attivi: *${brandAttivi}*\n`;
-  message += `Soglia Punti Raggiunta: *${sogliaTrovata > 0 ? sogliaTrovata + '+' : 'Nessuna'}*\n`;
-  message += `Bonus Extra Raggiunto: *€${bonusExtra}*\n`;
-  message += `Punti mancanti per la soglia successiva: *${puntiMancanti}*\n`;
-  message += `Guadagno Soglia Successiva: *€${bonusNext}*\n`;
-  message += `Proiezione ACEA: Aggiungi *${contrattiAceaAggiuntivi}* contratti ACEA per raggiungere la prossima soglia!\n\n`;
-  message += `Sei sulla buona strada, continua così e non mollare: il bonus extra è a portata di mano!`;
-  
-  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank');
-}
-
-/* Carica eventuali dati del target mese all'avvio */
-window.onload = function() {
-  caricaTarget();
-};
-</script>
-
+  </script>
 </body>
 </html>
