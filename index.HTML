@@ -151,7 +151,7 @@
           <label for="tgRs">Ragione Sociale:</label>
           <input type="text" id="tgRs" placeholder="Inserisci la ragione sociale">
         </div>
-         <div class="form-group">
+        <div class="form-group">
   <label for="cntSprint">Offerte SPRINT:</label>
   <input type="number" id="cntSprint" min="0" placeholder="">
 </div>
@@ -295,13 +295,13 @@ function showTab(id){
     }
 
     function getPrices(tot){
-      if(tot <= 5){
+      if(tot <= 4){
         return { sprint:60, flex:70, fix:70, business:85 };
       }
-      if(tot <= 9){
+      if(tot <= 8){
         return { sprint:70, flex:80, fix:80, business:85 };
       }
-      if(tot <= 19){
+      if(tot <= 18){
         return { sprint:75, flex:85, fix:85, business:100 };
       }
       return { sprint:85, flex:95, fix:95, business:100 };
