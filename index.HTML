@@ -737,14 +737,35 @@ Continua a lavorare con costanza e determinazione per raggiungere il tuo obietti
           <p><strong>Bonus attuale:</strong> €${currBonus}</p>`;
       }
 
-      if(activeCount>=2){
-        html += `
-          <p><strong>Punti mancanti per soglia successiva:</strong> ${missPts.toFixed(2)}</p>
-          <p><strong>Bonus next:</strong> €${bonusNext}</p>
-          <p><strong>Servono ${needAcea} contratti ACEA</strong> per arrivare a ${next} punti!</p>
-          <p class="success">Continua così, sei quasi al bonus extra!</p>
-        `;
-      }
+      if (activeCount >= 2) {
+  html += `
+    <p><strong>Punti mancanti per soglia successiva:</strong> ${missPts.toFixed(2)}</p>
+    <p><strong>Bonus next:</strong> €${bonusNext}</p>
+    <p><strong>Servono ${needAcea} contratti ACEA</strong> per arrivare a ${next} punti!</p>
+  `;
+
+  if (partials.length) {
+    html += `<p><strong>Cosa manca per attivare gli altri brand:</strong></p><ul>`;
+    partials.forEach(b => {
+      const misses = [];
+      b.min.forEach((m, i) => {
+        if (m > 0) {
+          const miss = Math.max(0, m - b.vals[i]);
+          if (miss > 0) {
+            const labels = ['SIM','Fissi','Energy','SIM','Fissi','LuceGas','Contratti','Leads','Contratti','Contratti'];
+            misses.push(`${miss} ${labels[i]}`);
+          }
+        }
+      });
+      html += `<li><strong>${b.name}</strong>: manca ${misses.join(', ')}</li>`;
+    });
+    html += `</ul>`;
+  }
+
+  html += `<p class="success">Continua così, sei quasi al bonus extra!</p>`;
+}
+
+
 
       out.innerHTML = html;
     }
@@ -765,3 +786,4 @@ Continua a lavorare con costanza e determinazione per raggiungere il tuo obietti
   </script>
 </body>
 </html>
+
