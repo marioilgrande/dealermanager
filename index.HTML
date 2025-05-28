@@ -143,26 +143,39 @@
       <div id="contrattiResult" class="result"></div>
     </div>
 
-    <!-- 2. Totale Guadagni -->
+       <!-- 2. Totale Guadagni -->
     <div id="totaleGuadagni" class="tab-content">
       <h2>Totale Guadagni</h2>
       <form>
         <div class="form-group">
-          <label for="manualRagioneSociale">Ragione Sociale:</label>
-          <input type="text" id="manualRagioneSociale">
+          <label for="tgRs">Ragione Sociale:</label>
+          <input type="text" id="tgRs" placeholder="Inserisci la ragione sociale">
         </div>
         <div class="form-group">
-          <label for="contrattiDomestici">Contratti Domestici:</label>
-          <input type="number" id="contrattiDomestici">
+          <label for="cntSprint">Offerte SPRINT:</label>
+          <input type="number" id="cntSprint" min="0" value="0">
         </div>
         <div class="form-group">
-          <label for="contrattiBusiness">Contratti Business:</label>
-          <input type="number" id="contrattiBusiness">
+          <label for="cntFlex">Offerte FLEX:</label>
+          <input type="number" id="cntFlex" min="0" value="0">
         </div>
-        <button type="button" onclick="calcolaManuale()">Calcola</button>
+        <div class="form-group">
+          <label for="cntFix">Offerte FIX:</label>
+          <input type="number" id="cntFix" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label for="cntBus">Contratti BUSINESS:</label>
+          <input type="number" id="cntBus" min="0" value="0">
+        </div>
+        <div class="form-group">
+          <label for="cntSub">Subentri (€60 cad.):</label>
+          <input type="number" id="cntSub" min="0" value="0">
+        </div>
+        <button type="button" onclick="calcolaGuadagni()">Calcola</button>
       </form>
-      <div id="manualeResult" class="result"></div>
+      <div id="tgResult" class="result"></div>
     </div>
+
 
     <!-- 3. Produzione Giornaliera -->
     <div id="produzioneGiornaliera" class="tab-content">
@@ -273,12 +286,58 @@
     /* =====================
    NAVIGAZIONE TABS
 ===================== */
-function showTab(tabId) {
-  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-  document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
-  document.getElementById(tabId).classList.add('active');
-}
+function showTab(id){
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+      document.querySelector(`.tab[onclick*="${id}"]`).classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+
+    function getPrices(tot){
+      if(tot <= 4){
+        return { sprint:60, flex:70, fix:70, business:85 };
+      }
+      if(tot <= 8){
+        return { sprint:70, flex:80, fix:80, business:85 };
+      }
+      if(tot <= 18){
+        return { sprint:75, flex:85, fix:85, business:100 };
+      }
+      return { sprint:85, flex:95, fix:95, business:100 };
+    }
+
+    function calcolaGuadagni(){
+      const rs     = document.getElementById('tgRs').value || 'N/A';
+      const s      = +document.getElementById('cntSprint').value || 0;
+      const fx     = +document.getElementById('cntFlex').value   || 0;
+      const fi     = +document.getElementById('cntFix').value    || 0;
+      const busCnt = +document.getElementById('cntBus').value    || 0;
+      const sub    = +document.getElementById('cntSub').value    || 0;
+
+      const totSoglia = s + fx + fi + sub;
+      const prices    = getPrices(totSoglia);
+
+      const revS   = s      * prices.sprint;
+      const revF   = fx     * prices.flex;
+      const revX   = fi     * prices.fix;
+      const revB   = busCnt * prices.business;
+      const revSub = sub    * 60;
+      const totale = revS + revF + revX + revB + revSub;
+      const totContratti = s + fx + fi + busCnt + sub;
+
+      document.getElementById('tgResult').innerHTML = `
+        <p><strong>Ragione Sociale:</strong> ${rs}</p>
+        <p>SPRINT:    ${s} × €${prices.sprint.toFixed(2)} = €${revS.toFixed(2)}</p>
+        <p>FLEX:      ${fx} × €${prices.flex.toFixed(2)} = €${revF.toFixed(2)}</p>
+        <p>FIX:       ${fi} × €${prices.fix.toFixed(2)} = €${revX.toFixed(2)}</p>
+        <p>BUSINESS:  ${busCnt} × €${prices.business.toFixed(2)} = €${revB.toFixed(2)}</p>
+        <p>Subentri:  ${sub} × €60.00 = €${revSub.toFixed(2)}</p>
+        <hr>
+        <p><strong>Totale Contratti:</strong> ${totContratti}</p>
+        <p class="success"><strong>Totale Guadagni:</strong> €${totale.toFixed(2)}</p>
+        <p class="success">Continua così, sei sulla buona strada!</p>
+      `;
+    }
 
 /* =====================
    FUNZIONI COMUNI
@@ -321,8 +380,8 @@ function calcolaFatturato(totContratti, percBusiness) {
 
   let compensoBus = 0;
   let aumentoBusiness = false;
-  // Se il totale dei contratti supera 6, i business valgono 100€ ciascuno
-  if (totContratti > 6) {
+  // Se il totale dei contratti supera 9, i business valgono 100€ ciascuno
+  if (totContratti >9) {
     compensoBus = numBusiness * 100;
     aumentoBusiness = true;
   } else {
@@ -372,7 +431,7 @@ function calcolaContratti() {
     `;
   } else {
     const avvisoBusiness = aumentoBusinessFlag
-      ? `<p class="alert">Superando i 10 contratti, quelli business valgono 100€</p>`
+      ? `<p class="alert">Superando i 9 contratti, quelli business valgono 100€</p>`
       : "";
     document.getElementById('contrattiResult').innerHTML = `
       <p><strong>Ragione Sociale:</strong> ${ragioneSociale}</p>
@@ -397,7 +456,7 @@ function calcolaContratti() {
   const totaleDomestico = calcolaCompensoDomestic(cDom);
   
   let totaleBusiness, aumentoBusiness = false;
-  if (totContratti > 10) {
+  if (totContratti > 9) {
     totaleBusiness = cBus * 100;
     aumentoBusiness = true;
   } else {
