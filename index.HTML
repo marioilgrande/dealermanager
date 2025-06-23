@@ -431,17 +431,29 @@ function calcolaContratti() {
   let busFinali = 0;
   let aumentoBusinessFlag = false;
 
-  for (let i = 1; i <= 1000; i++) {
-    const result = calcolaFatturato(i, percBusiness);
-    if (result.totale >= totaleSpese) {
-      contrattiNecessari = i;
-      fatturatoFinale = result.totale;
-      domFinali = result.domestici;
-      busFinali = result.business;
-      aumentoBusinessFlag = result.aumentoBusiness;
-      break;
-    }
+  // …calcolaContratti() prima del ciclo
+for (let i = 1; i <= 1000; i++) {
+  // 1) calcolo quanti business vs domestici
+  const numBusiness  = Math.ceil(i * percBusiness);
+  const numDomestici = i - numBusiness;
+
+  // 2) prendo i prezzi in base al totale i
+  const prices = getPrices(i);
+
+  // 3) fatturato simulato
+  const fatturato = numDomestici * prices.sprint   // sprint = tariffa "domestici"
+                   + numBusiness  * prices.business;
+
+  // 4) se copre le spese, salvo e interrompo
+  if (fatturato >= totaleSpese) {
+    contrattiNecessari   = i;
+    domFinali            = numDomestici;
+    busFinali            = numBusiness;
+    fatturatoFinale      = fatturato;
+    aumentoBusinessFlag  = i > 9;      // da soglia >9 tutti i business a 100€
+    break;
   }
+}
 
   if (contrattiNecessari === 0) {
     document.getElementById('contrattiResult').innerHTML = `
@@ -461,7 +473,7 @@ function calcolaContratti() {
       <p>- Business: ${busFinali}</p>
       <p><strong>Fatturato Totale Stimato:</strong> €${fatturatoFinale.toFixed(2)}</p>
       ${avvisoBusiness}
-      <p class="success">Obiettivo raggiunto con ${contrattiNecessari} contratti!</p>
+      <p class="success">Obiettivo raggiunto con ${contrattiNecessari} contratti SPRINT!</p>
     `;
   }
 }
@@ -789,5 +801,3 @@ Continua a lavorare con costanza e determinazione per raggiungere il tuo obietti
   </script>
 </body>
 </html>
-
-
