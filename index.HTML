@@ -70,6 +70,17 @@
     .flex-col {
       display:flex; flex-direction:column; gap:10px; flex:1;
     }
+/* --- checkbox affiancati alla label --- */
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px; /* come gli altri form-group */
+}
+.form-check input[type="checkbox"] {
+  width: auto;
+  margin: 0; 
+}
     button {
       background:var(--primary-color); color:#fff;
       border:none; border-radius:5px; margin-top:5px;
@@ -134,10 +145,10 @@
           <label for="utenze">Utenze (€):</label>
           <input type="number" id="utenze">
         </div>
-        <div class="form-group">
-          <input type="checkbox" id="guadagni">
-          <label for="guadagni">+20% contratti business</label>
-        </div>
+        <div class="form-group form-check">
+  <input type="checkbox" id="guadagni">
+  <label for="guadagni">+20% contratti business</label>
+</div>
         <button type="button" onclick="calcolaContratti()">Calcola</button>
       </form>
       <div id="contrattiResult" class="result"></div>
@@ -145,7 +156,7 @@
 
        <!-- 2. Totale Guadagni -->
     <div id="totaleGuadagni" class="tab-content">
-      <h2>Totale Guadagni</h2>
+      <h2>Totale Guadagni Acea</h2>
       <form>
         <div class="form-group">
           <label for="tgRs">Ragione Sociale:</label>
@@ -234,6 +245,12 @@
           <label for="nomeNegozio">Nome Negozio:</label>
           <input type="text" id="nomeNegozio" placeholder="Inserisci il nome del negozio">
         </div>
+    <!-- Jenio Store -->
+    <div class="form-group form-check">
+  <input type="checkbox" id="jenioStore">
+  <label for="jenioStore">Jenio Store</label>
+</div>
+
 
         <!-- Fastweb -->
         <div class="form-group">
@@ -253,24 +270,24 @@
             <input type="number" id="tiscaliFISSI" placeholder="Fissi (opzionale)">
           </div>
           <div class="form-group flex-col">
-            <label for="aceaCONTRATTI">Acea Contratti (min 6):</label>
-            <input type="number" id="aceaCONTRATTI">
+            <label for="aceaCONTRATTI">Acea Contratti:</label>
+            <input type="number" id="aceaCONTRATTI" placeholder="Contratti (min 6)">
           </div>
         </div>
 
         <!-- Sky, Efficiency & Rent -->
         <div class="flex-row">
           <div class="form-group flex-col">
-            <label for="skyCONTRATTI">Sky Contratti (min 2):</label>
-            <input type="number" id="skyCONTRATTI">
+            <label for="skyCONTRATTI">Sky Contratti:</label>
+            <input type="number" id="skyCONTRATTI" placeholder="Contratti (min 2)">
           </div>
           <div class="form-group flex-col">
             <label>Efficiency:</label>
-            <input type="number" id="effLeads" placeholder="Leads (min 5)">
-            <input type="number" id="effContr" placeholder="Contratti (min 1)">
+            <input type="number" id="effLeads" placeholder>
+            <input type="number" id="effContr" placeholder>
           </div>
           <div class="form-group flex-col">
-            <label for="rentCONTRATTI">Rent Contratti (min 1):</label>
+            <label for="rentCONTRATTI">Rent Contratti:</label>
             <input type="number" id="rentCONTRATTI">
           </div>
         </div>
@@ -596,179 +613,165 @@ Continua a lavorare con costanza e determinazione per raggiungere il tuo obietti
     ];
 
     function calcolaMultibrand(){
-      // leggi valori da input
-      brands[0].vals = [
-        +document.getElementById('fastwebSIM').value||0,
-        +document.getElementById('fastwebFISSI').value||0,
-        +document.getElementById('fastwebENERGY').value||0
-      ];
-      brands[1].vals = [
-        +document.getElementById('tiscaliSIM').value||0,
-        +document.getElementById('tiscaliFISSI').value||0
-      ];
-      brands[2].vals = [ +document.getElementById('aceaCONTRATTI').value||0 ];
-      brands[3].vals = [ +document.getElementById('skyCONTRATTI').value||0 ];
-      brands[4].vals = [
-        +document.getElementById('effLeads').value||0,
-        +document.getElementById('effContr').value||0
-      ];
-      brands[5].vals = [ +document.getElementById('rentCONTRATTI').value||0 ];
+  // 1. Lettura input
+  const fastwebSIM    = +document.getElementById('fastwebSIM').value   || 0;
+  const fastwebFISSI  = +document.getElementById('fastwebFISSI').value || 0;
+  const fastwebENERGY = +document.getElementById('fastwebENERGY').value|| 0;
+  const tiscaliSIM    = +document.getElementById('tiscaliSIM').value   || 0;
+  const tiscaliFISSI  = +document.getElementById('tiscaliFISSI').value || 0;
+  const aceaContratti = +document.getElementById('aceaCONTRATTI').value|| 0;
+  const skyContratti  = +document.getElementById('skyCONTRATTI').value  || 0;
+  const effLeads      = +document.getElementById('effLeads').value     || 0;
+  const effContr      = +document.getElementById('effContr').value     || 0;
+  const rentContratti = +document.getElementById('rentCONTRATTI').value|| 0;
 
-      let pts=0, activeCount=0, partials=[];
-            brands.forEach(b=>{
-        // se min[i] == 0 => campo opzionale, ignora nella verifica
-        const okAll = b.min.every((m,i)=> m === 0 ? true : b.vals[i] >= m);
-        const some  = b.vals.some(v=> v > 0);
-        b.active  = okAll;
-        b.partial = !okAll && some;
-        if (b.active)  activeCount++;
-        if (b.partial) partials.push(b);
-        b.vals.forEach((v,i)=> pts += v * b.score[i]);
-      });
+  // 2. Jenio Store?
+  const isJenio = document.getElementById('jenioStore').checked;
 
+  // 3. Soglie e bonus table per standard e per Jenio
+  const ascStandard     = [10,20,40,80,110];
+  const bonusStandard   = [
+    { sog:110, bonus:[400,800,1200] },
+    { sog:80,  bonus:[300,600,900]  },
+    { sog:40,  bonus:[200,400,600]  },
+    { sog:20,  bonus:[100,200,300]  },
+    { sog:10,  bonus:[ 50,100,150]  }
+  ];
+  const ascJenio        = [10,15,30,65,90];
+  const bonusJenio      = [
+    { sog:90,  bonus:[450,900,1300] },
+    { sog:65,  bonus:[330,660,1000] },
+    { sog:30,  bonus:[250,500,750]  },
+    { sog:15,  bonus:[180,360,540]  },
+    { sog:10,  bonus:[ 60,120,180]  }
+  ];
 
-      const out = document.getElementById('multibrandResult');
-      // caso tutti zero
-      if(brands.every(b=>b.vals.every(v=>v===0))){
-        out.innerHTML = `
-          <p class="alert"><strong>Per maturare bonus servono almeno 2 brand attivi.</strong></p>
-          <p class="alert">Per attivare almeno 2 brand raggiungi le soglie:</p>
-          <ul>
-            <li><strong>Fastweb:</strong> 10 SIM, 1 Fisso, 1 Energy</li>
-            <li><strong>Tiscali:</strong> 10 SIM</li>
-            <li><strong>Acea:</strong> 6 contratti</li>
-            <li><strong>Sky:</strong> 2 contratti</li>
-            <li><strong>Efficiency:</strong> 5 leads, 1 contratto</li>
-            <li><strong>Rent:</strong> 1 contratto</li>
-          </ul>
-          <p class="alert"><em>Al momento non sei in gara</em></p>
-        `;
-        return;
+  const asc        = isJenio ? ascJenio.reverse() : ascStandard.reverse();
+  const bonusTable = isJenio ? bonusJenio : bonusStandard;
+
+  // 4. Calcolo punteggio totale (inclusi Efficiency e Rent)
+  const pts = 
+      fastwebSIM    * 0.25 +
+      fastwebFISSI  *   1 +
+      fastwebENERGY *   2 +
+      tiscaliSIM    * 0.25 +
+      tiscaliFISSI  *   2 +
+      aceaContratti *   2 +
+      skyContratti  *   2 +
+      effLeads      *   1 +
+      effContr      *   5 +
+      rentContratti *   5;
+
+  // 5. Costruzione array brand “attivabili” (solo i 4)
+  const brands4 = [
+    { name:'Fastweb', vals:[fastwebSIM, fastwebFISSI, fastwebENERGY], min:[10,1,1], score:[0.25,1,2] },
+    { name:'Tiscali', vals:[tiscaliSIM, tiscaliFISSI],            min:[10,0],   score:[0.25,2]    },
+    { name:'Acea',    vals:[aceaContratti],                       min:[6],      score:[2]         },
+    { name:'Sky',     vals:[skyContratti],                        min:[2],      score:[2]         }
+  ];
+
+  // 6. Brand attivi / partial
+  let activeCount = 0;
+  const partials = [];
+  brands4.forEach(b=>{
+    const okAll = b.min.every((m,i)=> m===0 ? true : b.vals[i]>=m);
+    const some  = b.vals.some(v=> v>0);
+    b.active  = okAll;
+    b.partial = !okAll && some;
+    if(b.active)  activeCount++;
+    if(b.partial) partials.push(b);
+  });
+
+  // 7. Bonus corrente
+  let currTh=0, currBonus=0;
+  if(activeCount>=2){
+    for(let r of bonusTable){
+      if(pts>=r.sog){
+        currTh    = r.sog;
+        currBonus = r.bonus[activeCount-2]||0;
+        break;
       }
+    }
+  }
 
-      // calcola bonus corrente se >=2 attivi
-      let currTh=0, currBonus=0;
-      if(activeCount>=2){
-        for(let r of bonusTable){
-          if(pts>=r.sog){
-            currTh = r.sog;
-            currBonus = r.bonus[activeCount-2]||0;
-            break;
-          }
-        }
+  // 8. Simula partial (inalterato)
+  let hypoPts=pts, hypoAct=activeCount;
+  partials.forEach(b=>{
+    hypoAct++;
+    b.min.forEach((m,i)=>{
+      const miss = Math.max(0, m - b.vals[i]);
+      hypoPts += miss * b.score[i];
+    });
+  });
+  let hypoBonus=0;
+  if(hypoAct>=2){
+    for(let r of bonusTable){
+      if(hypoPts>=r.sog){
+        hypoBonus = r.bonus[hypoAct-2]||0;
+        break;
       }
+    }
+  }
 
-      // simula attivazione partial
-      let hypoPts = pts, hypoAct = activeCount;
-      partials.forEach(b=>{
-        hypoAct++;
-        b.min.forEach((m,i)=>{
-          const miss = Math.max(0, m - b.vals[i]);
-          hypoPts += miss * b.score[i];
-        });
-      });
-      let hypoBonus = 0;
-      if(hypoAct>=2){
-        for(let r of bonusTable){
-          if(hypoPts>=r.sog){
-            hypoBonus = r.bonus[hypoAct-2]||0;
-            break;
-          }
-        }
-      }
+  // 9. Soglia successiva
+  const next    = asc.find(x=> x>currTh ) || null;
+  const missPts = next ? Math.max(0, next-pts) : 0;
+  const bonusNext = next
+    ? bonusTable.find(r=>r.sog===next).bonus[activeCount-2]||0
+    : 0;
 
-      // soglia successiva
-      const asc = [10,20,40,80,110];
-      const next = asc.find(x=>x>currTh) || null;
-      const missPts = next ? Math.max(0, next - pts) : 0;
-      const bonusNext = next
-        ? bonusTable.find(r=>r.sog===next).bonus[Math.max(0,activeCount-2)]||0
-        : 0;
-      const needAcea = next ? Math.ceil(missPts/2) : 0;
+  // 10. Extra SKY+ENERGY (stessa logica)
+  const energySum  = fastwebENERGY + aceaContratti;
+  const extraMet   = skyContratti>=10 && energySum>=50;
+  const missSky    = Math.max(0, 10 - skyContratti);
+  const missEnergy = Math.max(0, 50 - energySum);
+  const extraBonus = extraMet ? 1500 : 0;
 
-      // costruisci HTML
-      let html = `
-        <p><strong>Punteggio Totale:</strong> ${pts.toFixed(2)}</p>
-        <p><strong>Brand Attivi:</strong> ${activeCount}/6</p>
-        <div class="brand-list">`;
-      brands.forEach(b=>{
-        const cls = b.active  ? 'active'
-                  : b.partial ? 'partial'
-                  :              'missing';
-        html += `<div class="brand ${cls}">${b.name}</div>`;
-      });
-      html += `</div>`;
+  // 11. Composizione HTML
+  let html = `<p><strong>Punteggio Totale:</strong> ${pts.toFixed(2)}</p>
+              <p><strong>Brand Attivi:</strong> ${activeCount}/4</p>
+              <div class="brand-list">`;
+  brands4.forEach(b=>{
+    const cls = b.active ? 'active' : b.partial ? 'partial' : 'missing';
+    html += `<div class="brand ${cls}">${b.name}</div>`;
+  });
+  html += `</div>`;
 
-      if(activeCount<2){
-        html += `<p class="alert"><strong>Per maturare bonus servono almeno 2 brand attivi.</strong></p>`;
-        if(partials.length){
-          html += `<p><strong>Hai iniziato a popolare ${partials.length} brand:</strong></p><ul>`;
-          partials.forEach(b=>{
-            const misses = [];
-            b.min.forEach((m,i)=>{
-              const miss = Math.max(0, m - b.vals[i]);
-              if(miss>0){
-                const labels = ['SIM','Fissi','Energy','SIM','Fissi','LuceGas','Contratti','Leads','Contratti','Contratti'];
-                misses.push(`${miss} ${labels[i]}`);
-              }
-            });
-            html += `<li><strong>${b.name}:</strong> manca ${misses.join(', ')}</li>`;
-          });
-          html += `</ul>
-            <p><strong>Potresti maturare:</strong> €${hypoBonus} attivando questi brand</p>`;
-        } else {
-          html += `<p>Mancano 2 brand da attivare:</p><ul>`;
-          brands.filter(b=>!b.active).slice(0,2).forEach(b=>{
-            const req = {
-              Fastweb:    '10 SIM, 1 Fisso, 1 Energy',
-              Tiscali:    '10 SIM',
-              Acea:       '6 contratti',
-              Sky:        '2 contratti',
-              Efficiency: '5 leads, 1 contratto',
-              Rent:       '1 contratto'
-            }[b.name];
-            html += `<li><strong>${b.name}:</strong> ${req}</li>`;
-          });
-          html += `</ul>`;
-        }
-      } else {
-        html += `
-          <p><strong>Soglia raggiunta:</strong> ${currTh ? currTh + '+' : 'Nessuna'}</p>
-          <p><strong>Bonus attuale:</strong> €${currBonus}</p>`;
-      }
+  if(activeCount>=2){
+    html += `<p><strong>Soglia raggiunta:</strong> ${currTh}+</p>
+             <p><strong>Bonus attuale:</strong> €${currBonus}</p>
+             <p><strong>Punti mancanti:</strong> ${missPts.toFixed(2)}</p>
+             <p><strong>Bonus next:</strong> €${bonusNext}</p>`;
+  } else {
+    html += `<p class="alert">Servono almeno 2 brand attivi per ottenere un bonus.</p>`;
+  }
 
-      if (activeCount >= 2) {
-  html += `
-    <p><strong>Punti mancanti per soglia successiva:</strong> ${missPts.toFixed(2)}</p>
-    <p><strong>Bonus next:</strong> €${bonusNext}</p>
-    <p><strong>Servono ${needAcea} contratti ACEA</strong> per arrivare a ${next} punti!</p>
-  `;
-
-  if (partials.length) {
-    html += `<p><strong>Cosa manca per attivare gli altri brand:</strong></p><ul>`;
-    partials.forEach(b => {
+  if(partials.length){
+    html += `<p><strong>Cosa manca per gli altri brand:</strong></p><ul>`;
+    partials.forEach(b=>{
       const misses = [];
-      b.min.forEach((m, i) => {
-        if (m > 0) {
-          const miss = Math.max(0, m - b.vals[i]);
-          if (miss > 0) {
-            const labels = ['SIM','Fissi','Energy','SIM','Fissi','LuceGas','Contratti','Leads','Contratti','Contratti'];
-            misses.push(`${miss} ${labels[i]}`);
-          }
+      b.min.forEach((m,i)=>{
+        const miss = Math.max(0, m - b.vals[i]);
+        if(miss>0){
+          const labels = ['SIM','Fissi','Energy','SIM','Fissi','Contratti','Contratti','Contratti','Contratti','Contratti'];
+          misses.push(`${miss} ${labels[i]}`);
         }
       });
-      html += `<li><strong>${b.name}</strong>: manca ${misses.join(', ')}</li>`;
+      html += `<li><strong>${b.name}:</strong> manca ${misses.join(', ')}</li>`;
     });
     html += `</ul>`;
   }
 
-  html += `<p class="success">Continua così, sei quasi al bonus extra!</p>`;
+  html += `<hr>
+           <p><strong>Extra SKY+ENERGY:</strong> ${
+             extraMet
+             ? `<span class="success">Raggiunto! +€${extraBonus}</span>`
+             : `<span class="alert">Mancano ${missSky} SKY e ${missEnergy} ENERGY</span>`
+           }</p>`;
+
+  document.getElementById('multibrandResult').innerHTML = html;
 }
 
-
-
-      out.innerHTML = html;
-    }
 
     function inviaReportMultibrand(){
       let msg = `*GARA MULTIBRAND*\nNegozio: ${document.getElementById('nomeNegozio').value||'N/A'}\n\n`;
@@ -786,4 +789,5 @@ Continua a lavorare con costanza e determinazione per raggiungere il tuo obietti
   </script>
 </body>
 </html>
+
 
